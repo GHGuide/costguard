@@ -1,0 +1,15 @@
+.env
+__pycache__/
+*.pyc
+.DS_Store
+downloads/
+data/ledger.json
+data/test_manager_dryrun.jsonl
+
+# internal planning/strategy docs — kept local, not part of the public solution
+RESEARCH_PROMPT.md
+RULES.md
+BRIEF.md
+PROGRESS.md
+CLAUDE.md
+docs/plan.md

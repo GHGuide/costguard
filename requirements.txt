@@ -1,0 +1,7 @@
+# CostGuard engine — runs fully offline on the standard library alone.
+# No third-party packages required for the core engine or the demo.
+#
+# Optional, only when you wire real providers / UiPath (not needed for `python -m costguard.cli`):
+#   anthropic>=0.40        # real Claude gateway adapter
+#   openai>=1.40           # real OpenAI gateway adapter
+#   uipath>=2.0            # UiPath Python SDK (coded agent, Orchestrator/Test Manager API)
