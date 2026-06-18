@@ -14,13 +14,14 @@ going live changes only the transport.
 """
 
 from .config import UiPathConfig, load_config
+from .auth import get_token
 from .maestro_contract import decide_action, INPUT_SCHEMA, OUTPUT_SCHEMA
 from .test_manager import TestManagerClient
 from .action_center import build_hitl_task, ActionCenterClient
 from .coded_agent import run_gate
 
 __all__ = [
-    "UiPathConfig", "load_config",
+    "UiPathConfig", "load_config", "get_token",
     "decide_action", "INPUT_SCHEMA", "OUTPUT_SCHEMA",
     "TestManagerClient", "build_hitl_task", "ActionCenterClient", "run_gate",
 ]

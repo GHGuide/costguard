@@ -13,3 +13,13 @@ BRIEF.md
 PROGRESS.md
 CLAUDE.md
 docs/plan.md
+
+# build artifacts + local tool/agent state (may contain tokens) — never publish
+.uipath/
+__uipath/
+.claude/
+*.nupkg
+
+# UiPath-authored reference docs (proprietary) — keep local, don't republish
+.agent/
+AGENTS.md

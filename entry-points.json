@@ -1,0 +1,258 @@
+{
+    "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+    "$id": "entry-points.json",
+    "entryPoints": [
+        {
+            "filePath": "main",
+            "uniqueId": "e565a3f2-bd31-4f6c-92bb-41896a31eb79",
+            "type": "function",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "baseline_model": {
+                        "type": "string"
+                    },
+                    "baseline_strategy": {
+                        "type": "string"
+                    },
+                    "candidate_model": {
+                        "type": "string"
+                    },
+                    "candidate_strategy": {
+                        "type": "string"
+                    },
+                    "outcome_unit": {
+                        "type": "string"
+                    },
+                    "n_invoices": {
+                        "type": "integer"
+                    },
+                    "repeats": {
+                        "type": "integer"
+                    },
+                    "monthly_outcomes": {
+                        "type": "integer"
+                    }
+                },
+                "required": []
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "verdict": {
+                        "type": "string"
+                    },
+                    "maestro_action": {
+                        "type": "string"
+                    },
+                    "cost_ratio": {
+                        "type": "number"
+                    },
+                    "accuracy_delta": {
+                        "type": "number"
+                    },
+                    "extra_cost_per_1000_outcomes_usd": {
+                        "type": "number"
+                    },
+                    "baseline_cost_per_outcome_usd": {
+                        "type": "number"
+                    },
+                    "candidate_cost_per_outcome_usd": {
+                        "type": "number"
+                    },
+                    "summary": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "verdict",
+                    "maestro_action",
+                    "cost_ratio",
+                    "accuracy_delta",
+                    "extra_cost_per_1000_outcomes_usd",
+                    "baseline_cost_per_outcome_usd",
+                    "candidate_cost_per_outcome_usd",
+                    "summary"
+                ]
+            },
+            "graph": {
+                "nodes": [
+                    {
+                        "id": "main.py:59",
+                        "name": "main",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    },
+                    {
+                        "id": "costguard/dataset.py:40",
+                        "name": "make_invoices",
+                        "type": "function",
+                        "metadata": {
+                            "file": "costguard/dataset.py"
+                        }
+                    },
+                    {
+                        "id": "costguard/dataset.py:18",
+                        "name": "_render",
+                        "type": "function",
+                        "metadata": {
+                            "file": "costguard/dataset.py"
+                        }
+                    },
+                    {
+                        "id": "costguard/stats.py:61",
+                        "name": "summarize",
+                        "type": "function",
+                        "metadata": {
+                            "file": "costguard/stats.py"
+                        }
+                    },
+                    {
+                        "id": "costguard/stats.py:39",
+                        "name": "_bootstrap_ci",
+                        "type": "function",
+                        "metadata": {
+                            "file": "costguard/stats.py"
+                        }
+                    },
+                    {
+                        "id": "costguard/stats.py:22",
+                        "name": "cost_per_success",
+                        "type": "function",
+                        "metadata": {
+                            "file": "costguard/stats.py"
+                        }
+                    },
+                    {
+                        "id": "costguard/verdict.py:64",
+                        "name": "decide",
+                        "type": "function",
+                        "metadata": {
+                            "file": "costguard/verdict.py"
+                        }
+                    },
+                    {
+                        "id": "costguard/report.py:31",
+                        "name": "build_report",
+                        "type": "function",
+                        "metadata": {
+                            "file": "costguard/report.py"
+                        }
+                    },
+                    {
+                        "id": "costguard/report.py:15",
+                        "name": "_summary_dict",
+                        "type": "function",
+                        "metadata": {
+                            "file": "costguard/report.py"
+                        }
+                    },
+                    {
+                        "id": "costguard/runner.py:41",
+                        "name": "run_config",
+                        "type": "function",
+                        "metadata": {
+                            "file": "costguard/runner.py"
+                        }
+                    },
+                    {
+                        "id": "costguard/quality.py:24",
+                        "name": "is_success",
+                        "type": "function",
+                        "metadata": {
+                            "file": "costguard/quality.py"
+                        }
+                    },
+                    {
+                        "id": "costguard/quality.py:20",
+                        "name": "field_accuracy",
+                        "type": "function",
+                        "metadata": {
+                            "file": "costguard/quality.py"
+                        }
+                    },
+                    {
+                        "id": "costguard/uipath/maestro_contract.py:19",
+                        "name": "decide_action",
+                        "type": "function",
+                        "metadata": {
+                            "file": "costguard/uipath/maestro_contract.py"
+                        }
+                    }
+                ],
+                "edges": [
+                    {
+                        "source": "costguard/dataset.py:40",
+                        "target": "costguard/dataset.py:18"
+                    },
+                    {
+                        "source": "main.py:59",
+                        "target": "costguard/dataset.py:40"
+                    },
+                    {
+                        "source": "costguard/stats.py:39",
+                        "target": "costguard/stats.py:22"
+                    },
+                    {
+                        "source": "costguard/stats.py:61",
+                        "target": "costguard/stats.py:39"
+                    },
+                    {
+                        "source": "costguard/stats.py:61",
+                        "target": "costguard/stats.py:22"
+                    },
+                    {
+                        "source": "main.py:59",
+                        "target": "costguard/stats.py:61"
+                    },
+                    {
+                        "source": "main.py:59",
+                        "target": "costguard/stats.py:61"
+                    },
+                    {
+                        "source": "main.py:59",
+                        "target": "costguard/verdict.py:64"
+                    },
+                    {
+                        "source": "costguard/report.py:31",
+                        "target": "costguard/report.py:15"
+                    },
+                    {
+                        "source": "costguard/report.py:31",
+                        "target": "costguard/report.py:15"
+                    },
+                    {
+                        "source": "main.py:59",
+                        "target": "costguard/report.py:31"
+                    },
+                    {
+                        "source": "costguard/quality.py:24",
+                        "target": "costguard/quality.py:20"
+                    },
+                    {
+                        "source": "costguard/runner.py:41",
+                        "target": "costguard/quality.py:24"
+                    },
+                    {
+                        "source": "costguard/runner.py:41",
+                        "target": "costguard/quality.py:20"
+                    },
+                    {
+                        "source": "main.py:59",
+                        "target": "costguard/runner.py:41"
+                    },
+                    {
+                        "source": "main.py:59",
+                        "target": "costguard/runner.py:41"
+                    },
+                    {
+                        "source": "main.py:59",
+                        "target": "costguard/uipath/maestro_contract.py:19"
+                    }
+                ]
+            }
+        }
+    ]
+}

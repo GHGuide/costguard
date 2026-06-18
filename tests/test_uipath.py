@@ -58,6 +58,17 @@ def test_hitl_payload_has_evidence():
     assert "cost_ratio" in t["data"] and t["data"]["reasons"]
 
 
+def test_get_token_requires_config():
+    from costguard.uipath.auth import get_token
+    from costguard.uipath.config import UiPathConfig
+    raised = False
+    try:
+        get_token(UiPathConfig())  # empty config -> no network call
+    except RuntimeError:
+        raised = True
+    assert raised
+
+
 def test_run_gate_end_to_end_dry_run():
     # full coded-agent path on the mock provider, isolated ledger
     import costguard.uipath.coded_agent as ca

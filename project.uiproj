@@ -1,0 +1,6 @@
+{
+  "ProjectType": "Function",
+  "Name": "costguard_gate",
+  "Description": "CostGuard \u2014 agentic cost & efficiency regression gate (UiPath AgentHack 2026, Track 3)",
+  "MainFile": null
+}
