@@ -28,6 +28,10 @@ VERDICT: FAIL ⛔  — "+4.4% accuracy is not worth 7.28x cost"  → promotion b
 ```
 A candidate that *looks* better (higher accuracy, passes correctness tests) is **7× more expensive per correctly-processed invoice**. CostGuard catches it before it ships.
 
+## Architecture
+
+![CostGuard architecture — the gate runs on UiPath; FAIL blocks promotion, NEEDS_REVIEW escalates to a human in Action Center](docs/architecture.svg)
+
 ## How it works
 
 ```
