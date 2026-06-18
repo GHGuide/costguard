@@ -1,6 +1,6 @@
 [project]
 name = "costguard_gate"
-version = "0.0.1"
+version = "0.0.3"
 description = "CostGuard agentic cost and efficiency regression gate (UiPath AgentHack 2026, Track 3)"
 authors = [{ name = "Leonardo Calancea" }]
 dependencies = [
