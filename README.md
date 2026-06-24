@@ -37,6 +37,8 @@ VERDICT: FAIL ⛔  — 13.1x cost for +0.0% accuracy → blocked
 ```
 The expensive "upgrade" (bigger model + a verify pass) bought **zero** quality and **13× the cost**. CostGuard blocked it — on real UiPath-gateway models, not a simulation. Raw result: [`docs/live-uipath-result.json`](docs/live-uipath-result.json).
 
+![CostGuard cost-regression gate — cost per correctly-processed invoice rose 13.12× on real UiPath models for +0.0% accuracy; promotion blocked](docs/cost-regression.gif)
+
 ### Two agents: the gate, then a Cost Explainer (multi-agent)
 When the gate blocks a change, a **second agent** root-causes *why* the cost moved — decomposing the ratio into model price, extra calls, and token volume — and writes it in plain language. It runs on the **same UiPath LLM Gateway**, so both agents are governed by the platform. Live output from the run above:
 

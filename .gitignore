@@ -30,3 +30,11 @@ AGENTS.md
 # graphify knowledge-graph output
 graphify-out/
 .graphify_*
+
+# node + video render artifacts — keep chart SOURCE, drop deps/renders
+node_modules/
+video/chart/node_modules/
+video/chart/.remotion/
+video/out/
+video/captures/
+video/vo/
