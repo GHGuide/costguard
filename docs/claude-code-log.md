@@ -42,7 +42,10 @@ These are real UiPath-integration obstacles the coding agent diagnosed and worke
 | Action Center task creation 404'd on the sandbox | tenant doesn't provision GenericTasks | Guarded the HITL call so the gate degrades gracefully (`deferred:action-center-unavailable`) instead of crashing |
 | `codedagent setup` broke on Python 3.14 / PEP-668 | externally-managed env | Installed the SDK with `uv tool install uipath` |
 
-Net result: the same gate runs **offline (deterministic mock)** and **live on real UiPath-gateway models** — the live FAIL verdict (13.12×) and the LangChain cross-platform run (12.76×) are committed as raw JSON in `docs/`.
+| `testcases run` → 403 even with TM scopes | the execution APIs need a distinct scope; the name isn't `TM.TestSetExecutions` | Read the app's live scope list, found the real one (`TM.TestExecutions`), re-authed |
+| `testcaselog finish` → cascading `ValidationError`s | several options are required (`--has-error`, `--executed-by`, `--run-id`, `--is-post-condition-met`) | Supplied them; the verdict recorded as a real result |
+
+Net result: the same gate runs **offline (deterministic mock)** and **live on real UiPath-gateway models** — the live FAIL verdict (13.12×) and the LangChain cross-platform run (12.76×) are committed as raw JSON in `docs/`, and the verdict is registered as a **real Test Cloud execution result** on test case CG:1 (result history shows `Failed`), reproducible via `costguard/uipath/register_result.py`.
 
 ## Evidence
 - **Commit history:** every commit in this repo was authored via Claude Code (`git log` — messages are co-authored by the model).

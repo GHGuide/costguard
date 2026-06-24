@@ -57,28 +57,37 @@ def main(argv: list[str]) -> int:
                     "--name", f"CostGuard gate — {verdict}", "--output", "json"])
     if "403" in out or "Forbidden" in out:
         print("\n  ⛔ Blocked by a missing scope (HTTP 403).")
-        print("  Add a Test Manager *execution* scope to the External Application, then re-run:")
-        print("    UiPath Admin → External Applications → (this app) → Scopes →")
-        print("    add  TM.TestSetExecutions  and  TM.TestCaseExecutions  → Save.")
+        print("  Add the Test Manager *execution* scope to the External Application, then re-run:")
+        print("    UiPath Admin → External Applications → (this app) → TestManager → edit scopes →")
+        print("    add  TM.TestExecutions  → Save.")
         print("  Then: uv run --with uipath python -m costguard.uipath.register_result")
         return 2
     if rc != 0:
         print("  run failed:\n" + out[-600:])
         return 1
 
-    execution_id = _json_tail(out).get("Id") or _json_tail(out).get("ExecutionId")
+    data = _json_tail(out)
+    data = data.get("Data", data)
+    if isinstance(data, list):
+        data = data[0] if data else {}
+    execution_id = (data or {}).get("Id") or (data or {}).get("ExecutionId")
     if not execution_id:
         print("  could not read execution id from:\n" + out[-600:])
         return 1
     print(f"  execution {execution_id} started")
 
+    executed_by = os.environ.get("COSTGUARD_EXECUTED_BY", "costguard-gate@ci")
     rc, out = _uip(["tm", "testcaselog", "finish", "--project-key", PROJECT,
                     "--execution-id", execution_id, "--test-case-id", TEST_CASE_ID,
-                    "--result", result, "--detail-link", REPO, "--output", "table"])
-    if rc != 0:
+                    "--result", result, "--has-error", "false",
+                    "--executed-by", executed_by, "--run-id", "1",
+                    "--is-post-condition-met", "true",
+                    "--detail-link", REPO, "--output", "table"])
+    if rc != 0 or "ValidationError" in out or "Forbidden" in out:
         print("  finish failed:\n" + out[-600:])
         return 1
-    print(f"  ✅ recorded {result} on CG:1 — visible in Test Cloud / Test Manager.")
+    print(f"  ✅ recorded {result} on CG:1 — visible in Test Cloud / Test Manager "
+          f"(result history shows {result}).")
     return 0
 
 
