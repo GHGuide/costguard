@@ -77,9 +77,9 @@ Run it yourself: `python3 -m costguard.evals`.
 
 ## UiPath components used
 - **UiPath Test Cloud / Test Manager API** — cost regression registered as a first-class test result; the gate.
-- **UiPath Maestro** — orchestrates the regression run and the promote/block/escalate flow.
-- **Coded Agent (Python SDK)** — the CostGuard engine in this repo. Two agents: the **gate** (verdict) and a **Cost Explainer** that root-causes the cost move in plain language — both run on the UiPath LLM Gateway.
-- **Agent Builder (low-code)** — the patient invoice-extraction agent.
+- **UiPath Maestro** — the promote/block/escalate decision contract is implemented in [`maestro_contract.py`](costguard/uipath/maestro_contract.py) (`decide_action`); deploying it as a Maestro process is the orchestration drop-in.
+- **Coded Agent (Python SDK)** — the CostGuard engine in this repo, **packaged and run as an Orchestrator job**. Two agents: the **gate** (verdict) and a **Cost Explainer** that root-causes the cost move in plain language — both run on the UiPath LLM Gateway.
+- **Agent Builder (low-code)** — the production drop-in for the patient invoice-extraction agent. *Today the patient is a deterministic simulation offline and a real **LangChain** agent on UiPath models live (below);* the gate treats any of them identically.
 - **Document Understanding** — invoice/PO field extraction (the patient).
 - **API Workflows** — refreshes the model-pricing table (tokens → $) from a live source at runtime (`refresh_pricing()` reads `COSTGUARD_PRICING_FILE`/`_JSON`; a pricing API Workflow writes it), so the gate always costs against current rates without a code change.
 - **AI Trust Layer — LLM Gateway** — the agent-under-test runs on real models here (`UiPathLLMGateway`), so token usage and cost are governed by the platform with no external API key. (+ OpenTelemetry traces for cost/token evidence.)
