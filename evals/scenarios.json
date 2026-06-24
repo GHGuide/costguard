@@ -1,0 +1,37 @@
+{
+  "description": "Labelled cost-gate regression scenarios. Each is a baseline->candidate agent change whose correct verdict is economically obvious. CostGuard's gate is scored against these. accuracy = simulated per-field accuracy of the agent-under-test.",
+  "scenarios": [
+    {"id": "F1",  "name": "haiku -> opus, no accuracy gain (15x pricier)",        "baseline": {"model": "claude-haiku-4-5", "accuracy": 0.92}, "candidate": {"model": "claude-opus-4-8", "accuracy": 0.92}, "expected": "FAIL"},
+    {"id": "F2",  "name": "gpt-4o-mini -> gpt-4o, no accuracy gain",               "baseline": {"model": "gpt-4o-mini", "accuracy": 0.90}, "candidate": {"model": "gpt-4o", "accuracy": 0.90}, "expected": "FAIL"},
+    {"id": "F3",  "name": "gpt-4.1-mini -> gpt-4.1, no accuracy gain",             "baseline": {"model": "gpt-4.1-mini", "accuracy": 0.90}, "candidate": {"model": "gpt-4.1", "accuracy": 0.90}, "expected": "FAIL"},
+    {"id": "F4",  "name": "nano -> gpt-large, no accuracy gain (75x)",             "baseline": {"model": "gpt-4.1-nano", "accuracy": 0.90}, "candidate": {"model": "gpt-large", "accuracy": 0.90}, "expected": "FAIL"},
+    {"id": "F5",  "name": "gpt-4o-mini simple -> gpt-4o verify (model + 2x calls)","baseline": {"model": "gpt-4o-mini", "strategy": "simple", "accuracy": 0.90}, "candidate": {"model": "gpt-4o", "strategy": "verify", "accuracy": 0.90}, "expected": "FAIL"},
+    {"id": "F6",  "name": "gpt-mini -> sonnet, no accuracy gain (10x)",            "baseline": {"model": "gpt-mini", "accuracy": 0.90}, "candidate": {"model": "claude-sonnet-4-6", "accuracy": 0.90}, "expected": "FAIL"},
+    {"id": "F7",  "name": "haiku simple -> haiku verify (2x calls, +3% acc)",      "baseline": {"model": "claude-haiku-4-5", "strategy": "simple", "accuracy": 0.90}, "candidate": {"model": "claude-haiku-4-5", "strategy": "verify", "accuracy": 0.90}, "expected": "FAIL"},
+    {"id": "F8",  "name": "gpt-4.1-mini -> gpt-4o, +1% acc not worth 6x",          "baseline": {"model": "gpt-4.1-mini", "accuracy": 0.90}, "candidate": {"model": "gpt-4o", "accuracy": 0.91}, "expected": "FAIL"},
+    {"id": "F9",  "name": "gpt-mini -> gpt-large, +2% acc not worth 20x",          "baseline": {"model": "gpt-mini", "accuracy": 0.90}, "candidate": {"model": "gpt-large", "accuracy": 0.92}, "expected": "FAIL"},
+    {"id": "F10", "name": "haiku -> sonnet, +2% acc not worth 3x",                 "baseline": {"model": "claude-haiku-4-5", "accuracy": 0.90}, "candidate": {"model": "claude-sonnet-4-6", "accuracy": 0.92}, "expected": "FAIL"},
+    {"id": "F11", "name": "gpt-4o-mini -> gpt-4.1, no accuracy gain",              "baseline": {"model": "gpt-4o-mini", "accuracy": 0.90}, "candidate": {"model": "gpt-4.1", "accuracy": 0.90}, "expected": "FAIL"},
+    {"id": "F12", "name": "nano -> gpt-4o, no accuracy gain",                      "baseline": {"model": "gpt-4.1-nano", "accuracy": 0.90}, "candidate": {"model": "gpt-4o", "accuracy": 0.90}, "expected": "FAIL"},
+    {"id": "F13", "name": "nano -> gpt-4.1, no accuracy gain (20x)",               "baseline": {"model": "gpt-4.1-nano", "accuracy": 0.90}, "candidate": {"model": "gpt-4.1", "accuracy": 0.90}, "expected": "FAIL"},
+
+    {"id": "P1",  "name": "opus -> haiku, same accuracy (cheaper)",               "baseline": {"model": "claude-opus-4-8", "accuracy": 0.92}, "candidate": {"model": "claude-haiku-4-5", "accuracy": 0.92}, "expected": "PASS"},
+    {"id": "P2",  "name": "gpt-4o -> gpt-4o-mini, same accuracy",                 "baseline": {"model": "gpt-4o", "accuracy": 0.90}, "candidate": {"model": "gpt-4o-mini", "accuracy": 0.90}, "expected": "PASS"},
+    {"id": "P3",  "name": "gpt-4.1 -> gpt-4.1-mini, same accuracy",               "baseline": {"model": "gpt-4.1", "accuracy": 0.90}, "candidate": {"model": "gpt-4.1-mini", "accuracy": 0.90}, "expected": "PASS"},
+    {"id": "P4",  "name": "gpt-large -> nano, same accuracy (75x cheaper)",       "baseline": {"model": "gpt-large", "accuracy": 0.90}, "candidate": {"model": "gpt-4.1-nano", "accuracy": 0.90}, "expected": "PASS"},
+    {"id": "P5",  "name": "sonnet -> gpt-mini, same accuracy",                    "baseline": {"model": "claude-sonnet-4-6", "accuracy": 0.90}, "candidate": {"model": "gpt-mini", "accuracy": 0.90}, "expected": "PASS"},
+    {"id": "R9",  "name": "gpt-4o verify -> gpt-4o-mini simple: cheaper but drops the verify pass, -3% accuracy", "baseline": {"model": "gpt-4o", "strategy": "verify", "accuracy": 0.90}, "candidate": {"model": "gpt-4o-mini", "strategy": "simple", "accuracy": 0.90}, "expected": "NEEDS_REVIEW"},
+    {"id": "P7",  "name": "gpt-4o -> gpt-4.1-mini, same accuracy",                "baseline": {"model": "gpt-4o", "accuracy": 0.90}, "candidate": {"model": "gpt-4.1-mini", "accuracy": 0.90}, "expected": "PASS"},
+    {"id": "P8",  "name": "haiku -> nano, same accuracy",                         "baseline": {"model": "claude-haiku-4-5", "accuracy": 0.92}, "candidate": {"model": "gpt-4.1-nano", "accuracy": 0.92}, "expected": "PASS"},
+    {"id": "P9",  "name": "opus -> gpt-4o-mini, same accuracy",                   "baseline": {"model": "claude-opus-4-8", "accuracy": 0.92}, "candidate": {"model": "gpt-4o-mini", "accuracy": 0.92}, "expected": "PASS"},
+
+    {"id": "R1",  "name": "haiku -> haiku, identical (within noise)",             "baseline": {"model": "claude-haiku-4-5", "accuracy": 0.92}, "candidate": {"model": "claude-haiku-4-5", "accuracy": 0.92}, "expected": "NEEDS_REVIEW"},
+    {"id": "R2",  "name": "gpt-4o-mini -> gpt-4o-mini, identical",                "baseline": {"model": "gpt-4o-mini", "accuracy": 0.90}, "candidate": {"model": "gpt-4o-mini", "accuracy": 0.90}, "expected": "NEEDS_REVIEW"},
+    {"id": "R3",  "name": "gpt-4.1-mini -> gpt-4.1-mini, identical",              "baseline": {"model": "gpt-4.1-mini", "accuracy": 0.90}, "candidate": {"model": "gpt-4.1-mini", "accuracy": 0.90}, "expected": "NEEDS_REVIEW"},
+    {"id": "R4",  "name": "gpt-4o -> gpt-4o-mini but accuracy drops 10% (cheaper-but-dumber)", "baseline": {"model": "gpt-4o", "accuracy": 0.95}, "candidate": {"model": "gpt-4o-mini", "accuracy": 0.85}, "expected": "NEEDS_REVIEW"},
+    {"id": "R5",  "name": "sonnet -> haiku but accuracy drops 7%",                "baseline": {"model": "claude-sonnet-4-6", "accuracy": 0.95}, "candidate": {"model": "claude-haiku-4-5", "accuracy": 0.88}, "expected": "NEEDS_REVIEW"},
+    {"id": "R6",  "name": "gpt-4.1 -> nano but accuracy drops 8%",                "baseline": {"model": "gpt-4.1", "accuracy": 0.93}, "candidate": {"model": "gpt-4.1-nano", "accuracy": 0.85}, "expected": "NEEDS_REVIEW"},
+    {"id": "R7",  "name": "haiku -> haiku but accuracy drops 7% (same cost)",     "baseline": {"model": "claude-haiku-4-5", "accuracy": 0.95}, "candidate": {"model": "claude-haiku-4-5", "accuracy": 0.88}, "expected": "NEEDS_REVIEW"},
+    {"id": "R8",  "name": "opus -> gpt-mini but accuracy drops 12%",              "baseline": {"model": "claude-opus-4-8", "accuracy": 0.95}, "candidate": {"model": "gpt-mini", "accuracy": 0.83}, "expected": "NEEDS_REVIEW"}
+  ]
+}

@@ -57,10 +57,43 @@ def test_cost_per_success_infinite_when_no_success():
     assert cost_per_success(recs) == float("inf")
 
 
+def test_explainer_attributes_cost_to_model_and_verify():
+    from costguard.explainer import attribute, explain
+    from costguard.patient import AgentConfig
+    base = AgentConfig("b", "gpt-4.1-mini", "simple")
+    cand = AgentConfig("c", "gpt-4o", "verify")
+    report = {"cost_ratio": 12.5, "accuracy_delta": 0.0,
+              "baseline": {"cost_per_success_usd": 0.0001},
+              "candidate": {"cost_per_success_usd": 0.00125}}
+    a = attribute(base, cand, report)
+    names = {f["name"] for f in a["factors"]}
+    assert {"model price", "verify pass", "token volume"} <= names
+    assert a["primary_driver"] in names
+    assert a["worth_it"] is False  # 0% accuracy gain
+    assert "12.5x" in explain(a) or "12.5" in explain(a)  # template path, no gateway
+
+
 def test_pricing_prefix_resolves_dated_model():
     from costguard.pricing import resolve, cost_usd
     assert resolve("claude-haiku-4-5-20251001") == resolve("claude-haiku-4-5")
     assert cost_usd("claude-haiku-4-5-20251001", 1_000_000, 0) == 1.00
+
+
+def test_pricing_refresh_from_env_override():
+    import os
+    from costguard import pricing
+    saved = os.environ.pop("COSTGUARD_PRICING_JSON", None)
+    try:
+        os.environ["COSTGUARD_PRICING_JSON"] = '{"future-model-x": {"input": 9.0, "output": 11.0}}'
+        n = pricing.refresh_pricing()
+        assert n == 1
+        assert pricing.resolve("future-model-x") == {"input": 9.0, "output": 11.0}
+        assert pricing.cost_usd("future-model-x", 0, 1_000_000) == 11.0
+    finally:
+        os.environ.pop("COSTGUARD_PRICING_JSON", None)
+        pricing.PRICING.pop("future-model-x", None)
+        if saved is not None:
+            os.environ["COSTGUARD_PRICING_JSON"] = saved
 
 
 def test_real_gateway_errors_without_key():

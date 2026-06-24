@@ -34,7 +34,15 @@ def main() -> int:
     c = summarize(candidate.name, run_config(agent, candidate, invoices, repeats=2, seed=2))
     report = build_report(b, c, decide(b, c))
 
+    # second agent: root-cause the cost move, explained by a real model on UiPath
+    from ..explainer import attribute, explain
+    if report["verdict"] != "PASS":
+        report["attribution"] = attribute(baseline, candidate, report)
+        report["explanation"] = explain(report["attribution"], gateway=agent.gw)
+
     _print_human(report)
+    if report.get("explanation"):
+        print("\n  Cost Explainer (2nd agent, on UiPath):\n  " + report["explanation"])
     with open("docs/live-uipath-result.json", "w", encoding="utf-8") as fh:
         json.dump(report, fh, indent=2)
     print("\nsaved docs/live-uipath-result.json  (real models, real tokens, via UiPath)")

@@ -35,5 +35,29 @@
     ],
     "mean_cost_per_run_usd": 0.001742,
     "mean_tokens_per_run": 355.0
-  }
+  },
+  "attribution": {
+    "cost_ratio": 13.12,
+    "accuracy_delta": 0.0,
+    "factors": [
+      {
+        "name": "model price",
+        "multiplier": 6.25,
+        "detail": "gpt-4o-2024-08-06 output costs 6.2x gpt-4.1-mini-2025-04-14"
+      },
+      {
+        "name": "verify pass",
+        "multiplier": 2.0,
+        "detail": "2 model call(s)/invoice vs 1"
+      },
+      {
+        "name": "token volume",
+        "multiplier": 1.05,
+        "detail": "tokens per call (verbosity / longer outputs)"
+      }
+    ],
+    "primary_driver": "model price",
+    "worth_it": false
+  },
+  "explanation": "The cost-per-processed-invoice rose 13.12x due to a 6.25x increase in model price, doubled model calls per invoice, and a slight 1.05x increase in token volume. Since accuracy did not improve, this cost increase is not justified."
 }

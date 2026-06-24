@@ -37,6 +37,20 @@ VERDICT: FAIL ⛔  — 13.1x cost for +0.0% accuracy → blocked
 ```
 The expensive "upgrade" (bigger model + a verify pass) bought **zero** quality and **13× the cost**. CostGuard blocked it — on real UiPath-gateway models, not a simulation. Raw result: [`docs/live-uipath-result.json`](docs/live-uipath-result.json).
 
+### Two agents: the gate, then a Cost Explainer (multi-agent)
+When the gate blocks a change, a **second agent** root-causes *why* the cost moved — decomposing the ratio into model price, extra calls, and token volume — and writes it in plain language. It runs on the **same UiPath LLM Gateway**, so both agents are governed by the platform. Live output from the run above:
+
+> *"The cost-per-processed-invoice rose 13.12x due to a 6.25x increase in model price, doubled model calls per invoice, and a slight 1.05x increase in token volume. Since accuracy did not improve, this cost increase is not justified."*
+
+The attribution is deterministic and tested; the plain-language summary is the LLM's. So CostGuard doesn't just say *no* — it says *why*, and what to revert.
+
+### How do we know the gate is right? (eval suite)
+A gate you can't trust is worthless, so the gate is itself meta-tested. [`evals/scenarios.json`](evals/scenarios.json) holds **30 labelled scenarios** where the correct verdict is economically obvious (clear regressions, clear wins, cheaper-but-dumber traps, within-noise ties). The gate scores them:
+```
+gate accuracy: 30/30 = 100%      PASS 8/8   FAIL 13/13   NEEDS_REVIEW 9/9
+```
+Run it yourself: `python3 -m costguard.evals`.
+
 ## Architecture
 
 ![CostGuard architecture — the gate runs on UiPath; FAIL blocks promotion, NEEDS_REVIEW escalates to a human in Action Center](docs/architecture.svg)
@@ -64,15 +78,15 @@ The expensive "upgrade" (bigger model + a verify pass) bought **zero** quality a
 ## UiPath components used
 - **UiPath Test Cloud / Test Manager API** — cost regression registered as a first-class test result; the gate.
 - **UiPath Maestro** — orchestrates the regression run and the promote/block/escalate flow.
-- **Coded Agent (Python SDK)** — the CostGuard engine in this repo.
-- **Agent Builder (low-code)** — the patient invoice-extraction agent + a "Cost Explainer" agent.
+- **Coded Agent (Python SDK)** — the CostGuard engine in this repo. Two agents: the **gate** (verdict) and a **Cost Explainer** that root-causes the cost move in plain language — both run on the UiPath LLM Gateway.
+- **Agent Builder (low-code)** — the patient invoice-extraction agent.
 - **Document Understanding** — invoice/PO field extraction (the patient).
-- **API Workflows** — live model-pricing lookup (tokens → $).
+- **API Workflows** — refreshes the model-pricing table (tokens → $) from a live source at runtime (`refresh_pricing()` reads `COSTGUARD_PRICING_FILE`/`_JSON`; a pricing API Workflow writes it), so the gate always costs against current rates without a code change.
 - **AI Trust Layer — LLM Gateway** — the agent-under-test runs on real models here (`UiPathLLMGateway`), so token usage and cost are governed by the platform with no external API key. (+ OpenTelemetry traces for cost/token evidence.)
 - **Action Center** — human-in-the-loop on FAIL / NEEDS_REVIEW.
 - **External framework** — a real **LangChain** agent-under-test runs on UiPath models and is gated by CostGuard, governed by the platform (live: 12.76× cost, +0% accuracy → blocked; [`docs/live-langchain-result.json`](docs/live-langchain-result.json)). Proves CostGuard tests *any* framework — UiPath-native or third-party.
 
-> Status: the **engine, statistics, gateway, and gate logic are complete and run offline today** (see below). The UiPath platform wiring is in progress on UiPath Automation Cloud (UiPath Labs).
+> **Status (honest).** *Live today on UiPath Automation Cloud:* both coded agents run on the **AI Trust Layer LLM Gateway** (real models — the 13.12× FAIL and the LangChain 12.76× run are committed raw JSON); the coded agent is packaged and runs as an Orchestrator job. *One scope-add away:* registering the verdict as a Test Cloud **execution result** — the CostGuard Test Manager project and test case CG:1 exist, and [`costguard/uipath/register_result.py`](costguard/uipath/register_result.py) records the verdict the moment the External App is granted a Test Manager execution scope (the script prints the exact remediation otherwise). *Deterministic + offline:* the full engine, the 30-scenario gate eval (100%), and 27 tests.
 
 ## Setup / run the demo (no API key, no platform access needed)
 Requires Python 3.10+ and nothing else.
@@ -80,7 +94,9 @@ Requires Python 3.10+ and nothing else.
 python3 -m costguard.cli           # human-readable gate report (the hero demo)
 python3 -m costguard.cli --json    # machine-readable report (what Test Cloud registers)
 python3 -m costguard.dashboard     # the control tower: savings ledger + fleet + cost-per-outcome trend
+python3 -m costguard.evals         # meta-test the gate: 30 labelled scenarios, scored (100%)
 python3 tests/test_engine.py       # engine tests
+python3 tests/test_evals.py        # gate must stay 100% on the eval suite
 python3 tests/test_ledger.py       # ledger / savings-math tests
 python3 tests/test_stress.py       # fuzz 150 random configs — invariants hold
 ```
@@ -104,7 +120,7 @@ Same engine and verdict logic — only the gateway changes, so real token usage 
 To test your own two agent versions, edit `BASELINE` / `CANDIDATE` in `costguard/cli.py`, or import `run_config`, `summarize`, `decide` and feed your own agent (any object exposing the patient contract).
 
 ## Agent type
-**Both.** A **coded agent** (the Python regression engine, deployed via the UiPath Python SDK) plus **low-code Agent Builder agents** (the invoice-extraction patient and the Cost Explainer). External LangChain/CrewAI agents are supported as the agent-under-test.
+**Both.** Two **coded agents** (the Python regression gate + a Cost Explainer, deployed via the UiPath Python SDK, both running on the UiPath LLM Gateway) plus a **low-code Agent Builder agent** (the invoice-extraction patient). External LangChain/CrewAI agents are supported as the agent-under-test.
 
 ## How Claude Code built this
 This solution was built **with Claude Code** (Anthropic) through **UiPath for Coding Agents**.
@@ -114,7 +130,11 @@ This solution was built **with Claude Code** (Anthropic) through **UiPath for Co
 ## Repository layout
 ```
 costguard/        engine: gateway, pricing, dataset, patient, quality, runner, stats, verdict, report, cli
-tests/            engine tests
+  explainer.py    second agent — root-causes a cost regression (model/calls/tokens) in plain language
+  evals.py        meta-test harness — scores the gate against labelled scenarios
+  uipath/         platform wiring: auth, LLM gateway, Test Manager, Action Center, live runners
+evals/            scenarios.json — 30 labelled gate scenarios (the gate scores 100%)
+tests/            engine, ledger, eval, uipath, and 150-config fuzz tests
 BRIEF.md          problem, idea, why-it-wins, judging map, milestones
 RULES.md          hackathon rules (reference)
 PROGRESS.md       running build log

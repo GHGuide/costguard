@@ -1,9 +1,15 @@
 """Model pricing table: tokens -> USD.
 
 Rates are USD per 1,000,000 tokens (input, output). Illustrative 2026 list
-prices; in the UiPath integration these are refreshed from a live pricing
-API Workflow so the gate always costs against current rates.
+prices; they are refreshable at runtime (see `refresh_pricing`) from a live
+source, so the gate always costs against current rates. In the UiPath
+integration a pricing API Workflow writes those current rates.
 """
+
+from __future__ import annotations
+
+import json
+import os
 
 PRICING = {
     "claude-haiku-4-5":   {"input": 1.00,  "output": 5.00},
@@ -17,6 +23,34 @@ PRICING = {
     "gpt-4.1-nano":       {"input": 0.10,  "output": 0.40},
     "gpt-4.1":            {"input": 2.00,  "output": 8.00},
 }
+
+
+def refresh_pricing() -> int:
+    """Merge live pricing overrides into PRICING and return how many rows changed.
+
+    Source (first that exists wins): a JSON file at ``COSTGUARD_PRICING_FILE`` or
+    inline JSON in ``COSTGUARD_PRICING_JSON``, shaped like PRICING
+    (``{"model": {"input": 1.0, "output": 5.0}}``). In the platform a pricing API
+    Workflow writes that file; offline with no override this is a safe no-op, so the
+    gate always costs against current rates without a code change."""
+    raw = None
+    path = os.environ.get("COSTGUARD_PRICING_FILE")
+    if path and os.path.exists(path):
+        with open(path, encoding="utf-8") as fh:
+            raw = fh.read()
+    raw = raw or os.environ.get("COSTGUARD_PRICING_JSON")
+    if not raw:
+        return 0
+    try:
+        data = json.loads(raw)
+    except ValueError:
+        return 0
+    changed = 0
+    for model, row in (data or {}).items():
+        if isinstance(row, dict) and "input" in row and "output" in row:
+            PRICING[model] = {"input": float(row["input"]), "output": float(row["output"])}
+            changed += 1
+    return changed
 
 
 def resolve(model: str) -> dict:
@@ -35,3 +69,7 @@ def cost_usd(model: str, input_tokens: int, output_tokens: int) -> float:
     """Dollar cost of one LLM call."""
     p = resolve(model)
     return input_tokens / 1_000_000 * p["input"] + output_tokens / 1_000_000 * p["output"]
+
+
+# Apply any live pricing override at import (no-op offline with no override set).
+refresh_pricing()

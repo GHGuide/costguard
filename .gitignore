@@ -5,9 +5,11 @@ __pycache__/
 downloads/
 data/ledger.json
 data/test_manager_dryrun.jsonl
+evals/result.json
 
 # internal planning/strategy docs — kept local, not part of the public solution
 RESEARCH_PROMPT.md
+VIDEO_PROMPT.md
 RULES.md
 BRIEF.md
 PROGRESS.md
@@ -22,4 +24,9 @@ __uipath/
 
 # UiPath-authored reference docs (proprietary) — keep local, don't republish
 .agent/
+.agents/
 AGENTS.md
+
+# graphify knowledge-graph output
+graphify-out/
+.graphify_*

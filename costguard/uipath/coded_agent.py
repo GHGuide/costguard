@@ -71,6 +71,14 @@ def run_gate(inp: dict) -> dict:
                      quality_tolerance=inp.get("quality_tolerance", 0.02))
     report = build_report(base, cand, verdict, cost_per_outcome_unit=inp.get("outcome_unit", "invoice"))
 
+    # second agent: explain WHY cost moved when the gate doesn't pass
+    from ..explainer import attribute, explain
+    attribution = explanation = None
+    if report["verdict"] != "PASS":
+        attribution = attribute(base_cfg, cand_cfg, report)
+        real_gw = agent.gw if getattr(agent.gw, "produces_text", False) else None
+        explanation = explain(attribution, gateway=real_gw)
+
     # record to the savings ledger (drives the dashboard)
     ledger = Ledger.load(LEDGER_PATH) if os.path.exists(LEDGER_PATH) else Ledger()
     event = ledger.record(report, agent=inp.get("agent", "agent"), version=cand_cfg.name,
@@ -88,6 +96,8 @@ def run_gate(inp: dict) -> dict:
         "report": report,
         "test_manager": tm,
         "hitl_task": hitl,
+        "attribution": attribution,
+        "explanation": explanation,
         "ledger_event": event.__dict__,
     }
 
