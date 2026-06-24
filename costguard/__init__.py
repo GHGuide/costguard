@@ -10,7 +10,8 @@ without touching the stats/verdict core.
 """
 
 from .pricing import cost_usd, resolve, PRICING
-from .gateway import LLMGateway, MockGateway, AnthropicGateway, OpenAIGateway, LLMResult
+from .gateway import (LLMGateway, MockGateway, AnthropicGateway, OpenAIGateway,
+                      UiPathLLMGateway, LLMResult)
 from .patient import InvoiceExtractionAgent, AgentConfig, REQUIRED_FIELDS
 from .runner import run_config, RunRecord
 from .stats import summarize, Summary
@@ -19,7 +20,8 @@ from .ledger import Ledger, GateEvent
 
 __all__ = [
     "cost_usd", "resolve", "PRICING",
-    "LLMGateway", "MockGateway", "AnthropicGateway", "OpenAIGateway", "LLMResult",
+    "LLMGateway", "MockGateway", "AnthropicGateway", "OpenAIGateway",
+    "UiPathLLMGateway", "LLMResult",
     "InvoiceExtractionAgent", "AgentConfig", "REQUIRED_FIELDS",
     "run_config", "RunRecord",
     "summarize", "Summary",

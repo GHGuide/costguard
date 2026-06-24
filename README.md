@@ -28,6 +28,15 @@ VERDICT: FAIL ⛔  — "+4.4% accuracy is not worth 7.28x cost"  → promotion b
 ```
 A candidate that *looks* better (higher accuracy, passes correctness tests) is **7× more expensive per correctly-processed invoice**. CostGuard catches it before it ships.
 
+### The same gate on REAL models, via UiPath (live, no external key)
+Routing the agent-under-test through the **UiPath AI Trust Layer LLM Gateway** (`UiPathLLMGateway`) — real models, real token usage, governed by the platform:
+```
+baseline  gpt-4.1-mini · simple   →  $0.0001 / correct invoice   (100% accuracy)
+candidate gpt-4o · verify         →  $0.0017 / correct invoice   (100% accuracy)
+VERDICT: FAIL ⛔  — 13.1x cost for +0.0% accuracy → blocked
+```
+The expensive "upgrade" (bigger model + a verify pass) bought **zero** quality and **13× the cost**. CostGuard blocked it — on real UiPath-gateway models, not a simulation. Raw result: [`docs/live-uipath-result.json`](docs/live-uipath-result.json).
+
 ## Architecture
 
 ![CostGuard architecture — the gate runs on UiPath; FAIL blocks promotion, NEEDS_REVIEW escalates to a human in Action Center](docs/architecture.svg)
@@ -59,7 +68,7 @@ A candidate that *looks* better (higher accuracy, passes correctness tests) is *
 - **Agent Builder (low-code)** — the patient invoice-extraction agent + a "Cost Explainer" agent.
 - **Document Understanding** — invoice/PO field extraction (the patient).
 - **API Workflows** — live model-pricing lookup (tokens → $).
-- **AI Trust Layer / OpenTelemetry agent traces** — governed cost/token evidence.
+- **AI Trust Layer — LLM Gateway** — the agent-under-test runs on real models here (`UiPathLLMGateway`), so token usage and cost are governed by the platform with no external API key. (+ OpenTelemetry traces for cost/token evidence.)
 - **Action Center** — human-in-the-loop on FAIL / NEEDS_REVIEW.
 - **External framework** — the patient can be a LangChain / CrewAI agent (validating a third-party agent inside a UiPath-orchestrated process).
 
@@ -73,8 +82,17 @@ python3 -m costguard.cli --json    # machine-readable report (what Test Cloud re
 python3 -m costguard.dashboard     # the control tower: savings ledger + fleet + cost-per-outcome trend
 python3 tests/test_engine.py       # engine tests
 python3 tests/test_ledger.py       # ledger / savings-math tests
+python3 tests/test_stress.py       # fuzz 150 random configs — invariants hold
 ```
-### Run against real LLMs
+### Run on REAL models via UiPath (no external key)
+With a UiPath bearer token + URL in the env, the agent-under-test runs on the AI Trust Layer LLM Gateway:
+```bash
+export UIPATH_ACCESS_TOKEN=...   # see costguard.uipath.auth.get_token
+export UIPATH_URL=https://staging.uipath.com/<org>/<tenant>
+uv run --with uipath python -m costguard.uipath.run_live
+```
+
+### Run against external-provider LLMs
 Set `ANTHROPIC_API_KEY` (or `OPENAI_API_KEY`) in `.env`, then:
 ```bash
 python3 -m costguard.live --provider anthropic \

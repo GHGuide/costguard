@@ -114,6 +114,40 @@ class AnthropicGateway(LLMGateway):
                          output_tokens=resp.usage.output_tokens)
 
 
+class UiPathLLMGateway(LLMGateway):
+    """Runs the agent-under-test on real models through the UiPath AI Trust Layer
+    LLM Gateway — no external API key, tokens + cost governed by the platform.
+    The SDK call is async; we drive it synchronously so the engine is unchanged.
+    Run inside a uipath-enabled env (e.g. `uv run --with uipath`) with
+    UIPATH_ACCESS_TOKEN + UIPATH_URL set."""
+
+    produces_text = True
+
+    def __init__(self, default_model: str = "gpt-4.1-mini-2025-04-14"):
+        try:
+            from uipath.platform import UiPath
+        except ImportError as e:  # pragma: no cover
+            raise ImportError("uipath SDK required (run via `uv run --with uipath`)") from e
+        self._sdk = UiPath()
+        self._default_model = default_model
+
+    def complete(self, model: str, prompt: str, max_output_tokens: int = 400) -> LLMResult:
+        import asyncio
+
+        mdl = model or self._default_model
+
+        async def _call():
+            return await self._sdk.llm.chat_completions(
+                messages=[{"role": "user", "content": prompt}],
+                model=mdl, max_tokens=max_output_tokens, temperature=0)
+
+        resp = _retry(lambda: asyncio.run(_call()))
+        text = resp.choices[0].message.content or ""
+        u = resp.usage
+        return LLMResult(text=text, model=mdl,
+                         input_tokens=u.prompt_tokens, output_tokens=u.completion_tokens)
+
+
 class OpenAIGateway(LLMGateway):
     """Real OpenAI gateway. Same contract as AnthropicGateway."""
 

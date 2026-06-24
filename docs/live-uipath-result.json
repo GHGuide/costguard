@@ -1,0 +1,39 @@
+{
+  "gate": "costguard.cost_efficiency_regression",
+  "outcome_unit": "invoice",
+  "verdict": "FAIL",
+  "cost_ratio": 13.121,
+  "accuracy_delta": 0.0,
+  "extra_cost_per_1000_outcomes_usd": 1.61,
+  "reasons": [
+    "cost per successful invoice rose 13.12x (candidate CI $0.0017-$0.0018 vs baseline $0.0001-$0.0001)"
+  ],
+  "baseline": {
+    "name": "baseline \u00b7 gpt-4.1-mini \u00b7 simple",
+    "n_runs": 10,
+    "success_rate": 1.0,
+    "mean_accuracy": 1.0,
+    "total_cost_usd": 0.0013,
+    "cost_per_success_usd": 0.000133,
+    "cost_per_success_ci": [
+      0.000132,
+      0.000134
+    ],
+    "mean_cost_per_run_usd": 0.000133,
+    "mean_tokens_per_run": 161.0
+  },
+  "candidate": {
+    "name": "candidate \u00b7 gpt-4o \u00b7 verify",
+    "n_runs": 10,
+    "success_rate": 1.0,
+    "mean_accuracy": 1.0,
+    "total_cost_usd": 0.0174,
+    "cost_per_success_usd": 0.001742,
+    "cost_per_success_ci": [
+      0.001733,
+      0.001752
+    ],
+    "mean_cost_per_run_usd": 0.001742,
+    "mean_tokens_per_run": 355.0
+  }
+}
