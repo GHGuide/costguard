@@ -7,8 +7,21 @@ const base = { fps: 30, width: 1920, height: 1080 } as const;
 
 export const RemotionRoot: React.FC = () => (
   <>
-    {/* hero data scene */}
+    {/* hero data scene — live UiPath run (README/teaser) */}
     <Composition id="CostRegression" component={CostRegression} durationInFrames={300} {...base} />
+
+    {/* narrated variant for the master at s07 — the 7.27x demo run the VO describes */}
+    <Composition id="CostRegression7" component={CostRegression} durationInFrames={300} {...base}
+      defaultProps={{
+        baseCps: 0.0009, candCps: 0.006543, ratio: 7.27, accDelta: 4.4,
+        factors: [
+          { name: "model price", mult: 3.0 },
+          { name: "verify pass", mult: 2.0 },
+          { name: "token volume", mult: 1.21 },
+        ],
+        kicker: "COSTGUARD — COST-REGRESSION GATE",
+        footer: "20 deterministic runs · cost per correctly-processed invoice",
+      }} />
 
     {/* s01 hook */}
     <Composition id="s01-hook" component={TitleCard} durationInFrames={150} {...base}
