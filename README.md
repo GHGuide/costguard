@@ -70,7 +70,7 @@ The expensive "upgrade" (bigger model + a verify pass) bought **zero** quality a
 - **API Workflows** — live model-pricing lookup (tokens → $).
 - **AI Trust Layer — LLM Gateway** — the agent-under-test runs on real models here (`UiPathLLMGateway`), so token usage and cost are governed by the platform with no external API key. (+ OpenTelemetry traces for cost/token evidence.)
 - **Action Center** — human-in-the-loop on FAIL / NEEDS_REVIEW.
-- **External framework** — the patient can be a LangChain / CrewAI agent (validating a third-party agent inside a UiPath-orchestrated process).
+- **External framework** — a real **LangChain** agent-under-test runs on UiPath models and is gated by CostGuard, governed by the platform (live: 12.76× cost, +0% accuracy → blocked; [`docs/live-langchain-result.json`](docs/live-langchain-result.json)). Proves CostGuard tests *any* framework — UiPath-native or third-party.
 
 > Status: the **engine, statistics, gateway, and gate logic are complete and run offline today** (see below). The UiPath platform wiring is in progress on UiPath Automation Cloud (UiPath Labs).
 
