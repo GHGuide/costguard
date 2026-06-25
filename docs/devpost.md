@@ -35,7 +35,9 @@ Enterprises ship AI agents fast but have no way to catch when a change makes one
 
 ## How do we know the gate is right?
 
-It's meta-tested. `evals/scenarios.json` holds **30 labelled scenarios** where the correct call is economically obvious (clear regressions, clear wins, cheaper-but-dumber traps, within-noise ties). The gate scores them **30/30 (100%)** — enforced in CI.
+A **regression suite of 30 hand-labelled scenarios** (`evals/scenarios.json`) pins the gate's verdicts — clear regressions, clear wins, cheaper-but-dumber traps, within-noise ties. All 30 must match their expected verdict in CI, so a change that silently flips a call fails the build. It's a **consistency guard, not a wild-accuracy benchmark** (the scenarios are designed to have an obvious right answer).
+
+**What's real vs. simulated (so the numbers are trustworthy):** the LLM calls, token counts, $ cost, the Orchestrator serverless job, and the Test Cloud result are **real**; the invoice *documents* are synthetic and the offline path uses a deterministic mock so it runs keyless. Maestro + Action Center are contracts in code, not deployed processes. The cost engine and UiPath integration are real — the agent-under-test is a controlled stand-in so the regression reproduces on demand.
 
 ## How it works
 
@@ -73,4 +75,4 @@ Cost-per-outcome trends as a continuous Maestro-orchestrated control tower; mult
 ## Try it
 
 Repo: https://github.com/GHGuide/costguard (MIT). Offline, no keys:
-`python3 -m costguard.cli` · `python3 -m costguard.evals` (30/30) · `python3 -m costguard.dashboard`.
+`python3 -m costguard.cli` · `python3 -m costguard.evals` (regression suite) · `python3 -m costguard.dashboard`.

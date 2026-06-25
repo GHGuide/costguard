@@ -46,12 +46,12 @@ When the gate blocks a change, a **second agent** root-causes *why* the cost mov
 
 The attribution is deterministic and tested; the plain-language summary is the LLM's. So CostGuard doesn't just say *no* — it says *why*, and what to revert.
 
-### How do we know the gate is right? (eval suite)
-A gate you can't trust is worthless, so the gate is itself meta-tested. [`evals/scenarios.json`](evals/scenarios.json) holds **30 labelled scenarios** where the correct verdict is economically obvious (clear regressions, clear wins, cheaper-but-dumber traps, within-noise ties). The gate scores them:
+### The gate must not drift (regression suite)
+The gate's verdicts are pinned by a **regression suite of 30 hand-labelled scenarios** ([`evals/scenarios.json`](evals/scenarios.json)) — clear cost regressions, clear wins, cheaper-but-dumber traps, and within-noise ties. Each label is the call a FinOps reviewer would make; the suite locks the gate against it, so a code change that silently flips a verdict fails CI:
 ```
-gate accuracy: 30/30 = 100%      PASS 8/8   FAIL 13/13   NEEDS_REVIEW 9/9
+30/30 scenarios match their expected verdict     PASS 8 · FAIL 13 · NEEDS_REVIEW 9
 ```
-Run it yourself: `python3 -m costguard.evals`.
+This is a **consistency guard, not a quality benchmark** — the scenarios are *designed* to have an obvious right answer, so 30/30 means "the gate still behaves as specified," not "the gate is 100% accurate in the wild." Run it: `python3 -m costguard.evals`.
 
 ## Architecture
 
@@ -63,7 +63,7 @@ Run it yourself: `python3 -m costguard.evals`.
  change to agent (prompt/model/tool)
         │
         ▼
- ┌──────────────────────── UiPath Maestro (orchestration + governance) ───────────────────────┐
+ ┌──────────────── UiPath Orchestrator job  (Maestro process = the productization path) ───────┐
  │   Patient = invoice/PO extraction agent  ──run N times over a Test Cloud scenario set──┐    │
  │   (UiPath Document Understanding + Agent Builder, or an external LangChain/CrewAI agent)│    │
  │                                                                                        ▼    │
@@ -88,7 +88,17 @@ Run it yourself: `python3 -m costguard.evals`.
 - **Action Center** — human-in-the-loop on FAIL / NEEDS_REVIEW.
 - **External framework** — a real **LangChain** agent-under-test runs on UiPath models and is gated by CostGuard, governed by the platform (live: 12.76× cost, +0% accuracy → blocked; [`docs/live-langchain-result.json`](docs/live-langchain-result.json)). Proves CostGuard tests *any* framework — UiPath-native or third-party.
 
-> **Status (honest).** *Live today on UiPath Automation Cloud:* both coded agents run on the **AI Trust Layer LLM Gateway** (real models — the 13.12× FAIL and the LangChain 12.76× run are committed raw JSON); the coded agent is packaged and runs as an Orchestrator job; and the gate's verdict is registered as a **real Test Cloud execution result** on test case CG:1 (result history shows `Failed`, linked to this repo) — reproducible in one command via [`costguard/uipath/register_result.py`](costguard/uipath/register_result.py). *Deterministic + offline:* the full engine, the 30-scenario gate eval (100%), and 27 tests.
+> **Status (honest).** *Live today on UiPath Automation Cloud:* both coded agents run on the **AI Trust Layer LLM Gateway** (real models — the 13.12× FAIL and the LangChain 12.76× run are committed raw JSON); the coded agent is packaged and runs as an Orchestrator job; and the gate's verdict is registered as a **real Test Cloud execution result** on test case CG:1 (result history shows `Failed`, linked to this repo) — reproducible in one command via [`costguard/uipath/register_result.py`](costguard/uipath/register_result.py). *Deterministic + offline:* the full engine, the 30-scenario regression suite, and 27 tests.
+
+### What's real vs. what's simulated (so you can trust the numbers)
+| Real | Simulated / illustrative |
+|---|---|
+| LLM calls, token counts, $ cost — through the **UiPath LLM Gateway** (and Anthropic/OpenAI adapters) | The invoice **documents** are synthetically generated (fixed seed), not scanned real-world PDFs |
+| Field extraction from **actual model output** (parsed + scored vs ground truth) when run live | The **offline** demo path uses a deterministic mock gateway (so it runs with no key) — its accuracy is set, not measured |
+| The **Orchestrator serverless job**, its FAIL verdict, and the **Test Cloud result** on CG:1 | Maestro orchestration + Action Center HITL are **contracts in code**, not deployed processes (the sandbox doesn't provision them) |
+| The **cost-per-outcome** math, bootstrap CIs, and the 7.27× / 13.12× ratios on those inputs | The 30-scenario suite is a **consistency guard**, not a wild-accuracy benchmark |
+
+The honest one-liner: **the cost engine and the UiPath integration are real; the agent-under-test is a controlled stand-in** so the regression is reproducible on demand. Swap in your own agent + documents and the same gate runs unchanged.
 
 ## Setup / run the demo (no API key, no platform access needed)
 Requires Python 3.10+ and nothing else.
@@ -96,9 +106,9 @@ Requires Python 3.10+ and nothing else.
 python3 -m costguard.cli           # human-readable gate report (the hero demo)
 python3 -m costguard.cli --json    # machine-readable report (what Test Cloud registers)
 python3 -m costguard.dashboard     # the control tower: savings ledger + fleet + cost-per-outcome trend
-python3 -m costguard.evals         # meta-test the gate: 30 labelled scenarios, scored (100%)
+python3 -m costguard.evals         # gate regression suite: 30 labelled scenarios, all must match
 python3 tests/test_engine.py       # engine tests
-python3 tests/test_evals.py        # gate must stay 100% on the eval suite
+python3 tests/test_evals.py        # gate verdicts must still match the 30 labelled scenarios
 python3 tests/test_ledger.py       # ledger / savings-math tests
 python3 tests/test_stress.py       # fuzz 150 random configs — invariants hold
 ```
