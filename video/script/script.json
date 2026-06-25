@@ -43,6 +43,14 @@
       "captions": true
     },
     {
+      "id": "s03c_killer",
+      "beat": "the_trap_shown",
+      "vo": "Watch. The new version passes every correctness test you have. Extraction, schema, accuracy, QA, all green. It would ship. CostGuard blocks it anyway: seven times the cost, for the exact same answers.",
+      "capture": null,
+      "graphic": "GreenRed",
+      "captions": true
+    },
+    {
       "id": "s03b_explain",
       "beat": "explain_plain",
       "vo": "Here's the idea in one breath. Whenever you change an agent, CostGuard runs it, checks the answers are still right, and adds up what they cost. If the new version pays more for the same result, it's blocked. A spend-checker for your agents.",

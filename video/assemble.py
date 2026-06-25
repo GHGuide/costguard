@@ -18,6 +18,7 @@ SRC = {
     "s01_hook":        ("out/scenes/s01-hook.mp4",            "video"),
     "s02_gap":         ("out/scenes/s02-gap.mp4",             "video"),
     "s03_name":        ("out/scenes/s03-name.mp4",            "video"),
+    "s03c_killer":     ("out/scenes/s03c-killer.mp4",         "video"),
     "s03b_explain":    ("out/scenes/s03b-explain.mp4",        "video"),
     "s04_architecture":("out/scenes/s04-architecture.mp4",       "video"),
     "s05_under_test":  ("out/scenes/s04-architecture.mp4",       "video"),

@@ -12,13 +12,10 @@ MODEL = "eleven_multilingual_v2"
 SETTINGS = {"stability": 0.5, "similarity_boost": 0.8, "style": 0, "use_speaker_boost": True, "speed": 0.96}
 
 NEW = [
-    ("s03b_explain",
-     "Here's the idea in one breath. Whenever you change an agent, CostGuard runs it, "
-     "checks the answers are still right, and adds up what they cost. If the new version "
-     "pays more for the same result, it's blocked. A spend-checker for your agents."),
-    ("s13b_install",
-     "Trying it is two commands: clone the repo, then run the gate. You get a verdict — "
-     "pass, fail, or needs review — and the dollars behind it. Point it at your own agent in two lines."),
+    ("s03c_killer",
+     "Watch. The new version passes every correctness test you have. Extraction, schema, "
+     "accuracy, QA, all green. It would ship. CostGuard blocks it anyway: seven times the "
+     "cost, for the exact same answers."),
 ]
 
 
