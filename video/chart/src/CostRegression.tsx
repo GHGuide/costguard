@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, interpolate } from "remotion";
 import { scaleLinear } from "d3-scale";
-import { C, BG, M, SANS, mono, ramp, rise } from "./theme";
+import { C, BG, M, SANS, mono, ramp, rise, breathe } from "./theme";
 
 type Factor = { name: string; mult: number };
 export type CostProps = {
@@ -51,7 +51,7 @@ export const CostRegression: React.FC<Partial<CostProps>> = (props) => {
   ];
 
   return (
-    <AbsoluteFill style={{ background: BG, fontFamily: SANS, color: C.ink }}>
+    <AbsoluteFill style={{ background: BG, fontFamily: SANS, color: C.ink, ...breathe(f) }}>
       <div style={{ position: "absolute", left: M, top: 92, ...rise(f, 2, 8) }}>
         <div style={{ ...mono, fontSize: 17, letterSpacing: 3, color: C.accent, fontWeight: 600 }}>
           {kicker}

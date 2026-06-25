@@ -36,6 +36,13 @@ export const rise = (f: number, a: number, dy = 12, len = 14): React.CSSProperti
 });
 export const mono: React.CSSProperties = { fontFamily: MONO, fontVariantNumeric: "tabular-nums" };
 
+// Continuous slow push so a scene is never frozen — the single biggest de-AI fix.
+// Runs across the whole composition; assembly trims to the VO length.
+export const breathe = (frame: number, dur = 600, from = 1.0, to = 1.035): React.CSSProperties => ({
+  transform: `scale(${interpolate(frame, [0, dur], [from, to], { extrapolateRight: "clamp" })})`,
+  transformOrigin: "50% 44%",
+});
+
 // A small accent kicker used across scenes — keeps the family identity.
 export const Kicker: React.FC<{ frame: number; text: string; at?: number }> = ({ frame, text, at = 2 }) => (
   <div style={{ ...mono, fontSize: 17, letterSpacing: 3, color: C.accent, fontWeight: 600, ...rise(frame, at, 8) }}>

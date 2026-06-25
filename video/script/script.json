@@ -1,0 +1,187 @@
+{
+  "project": "uipath-costguard",
+  "_doc": "CostGuard (UiPath AgentHack Track 3). VO is the timing backbone — scene length = measured VO + 0.6s pad. Arc: hook -> the gap -> name it -> architecture -> agent-under-test (cross-platform) -> why-many-runs contrast -> live verdict -> on UiPath -> savings ledger -> human decision -> robustness -> coding-agent build -> impact -> logo. Aim ~4:00 (5-min enterprise format). capture:null = motion graphic (uipath theme); capture:'captures/x' = REAL footage (terminal via VHS, or live UiPath Automation Cloud UI via Playwright — never a recreation). HONESTY: live Orchestrator job + FAIL verdict are real; the Action Center task endpoint is disabled on the sandbox, so show the BLOCK decision, not a fake task. Run the humanizer skill on every vo line before audio.",
+  "scenes": [
+    {
+      "id": "s01_hook",
+      "beat": "cold_open",
+      "vo": "You change an agent's prompt to make it smarter. It passes every test you have. Three weeks later, finance asks why the bill tripled. Same agent, same answers, just quietly more expensive.",
+      "target_sec": 16,
+      "capture": null,
+      "graphic": "TitleCard",
+      "graphic_props": {
+        "kicker": "CostGuard",
+        "line": "It passed the tests. It still cost 7x more."
+      },
+      "captions": true
+    },
+    {
+      "id": "s02_gap",
+      "beat": "the_ask",
+      "vo": "Here's the gap. We test whether an agent is right. We almost never test what it costs to be right. Agent spend is a real line item now, and one prompt change can double it overnight. There's still no gate for that.",
+      "target_sec": 17,
+      "capture": null,
+      "graphic": "StatPunch",
+      "graphic_props": {
+        "stat": "0",
+        "unit": "gates for agent cost",
+        "sub": "correctness is tested — cost isn't"
+      },
+      "captions": true
+    },
+    {
+      "id": "s03_name",
+      "beat": "the_ask",
+      "vo": "So we built one. We call it CostGuard.",
+      "target_sec": 5,
+      "capture": null,
+      "graphic": "NamedTask",
+      "graphic_props": {
+        "label": "The gate",
+        "task": "Block this agent version if it costs more per processed invoice"
+      },
+      "captions": true
+    },
+    {
+      "id": "s03b_explain",
+      "beat": "explain_plain",
+      "vo": "Here's the idea in one breath. Whenever you change an agent, CostGuard runs it, checks the answers are still right, and adds up what they cost. If the new version pays more for the same result, it's blocked. A spend-checker for your agents.",
+      "capture": null,
+      "graphic": "Explain",
+      "captions": true
+    },
+    {
+      "id": "s04_architecture",
+      "beat": "accept_plan",
+      "vo": "The idea is simple. A new version of the agent goes in. CostGuard runs it many times on the same invoices, records the dollars on every run, and checks whether each invoice came out right. Then it compares cost per correct invoice to the last version you trusted. Not cost per token. Cost per result.",
+      "target_sec": 21,
+      "capture": "captures/architecture",
+      "captions": true
+    },
+    {
+      "id": "s05_under_test",
+      "beat": "feature",
+      "vo": "The agent on trial can be a UiPath Document Understanding agent, or one from outside: LangChain, CrewAI, whatever you run. CostGuard treats it as a black box and measures all of them the same way.",
+      "target_sec": 14,
+      "capture": "captures/architecture",
+      "captions": true
+    },
+    {
+      "id": "s06_contrast",
+      "beat": "contrast",
+      "vo": "Why run it many times? Because one run lies. On a single invoice the new version looks fine. Run it twenty times and the truth shows up.",
+      "target_sec": 14,
+      "capture": null,
+      "graphic": "SplitScreen",
+      "graphic_props": {
+        "leftLabel": "One run",
+        "rightLabel": "Twenty runs",
+        "dividerLabel": "VS",
+        "leftItems": [
+          { "who": "Quality", "text": "looks fine", "tone": "ok" },
+          { "who": "Cost", "text": "no signal yet", "tone": "muted" },
+          { "who": "Verdict", "text": "would pass", "tone": "warn" }
+        ],
+        "rightItems": [
+          { "who": "Quality", "text": "+4.4% accuracy", "tone": "ok" },
+          { "who": "Cost", "text": "7.27x per invoice", "tone": "accent" },
+          { "who": "Verdict", "text": "FAIL - blocked", "tone": "accent" }
+        ]
+      },
+      "captions": true
+    },
+    {
+      "id": "s07_verdict",
+      "beat": "action_montage",
+      "vo": "Here it is on a real agent. Accuracy went up about four percent. Cost per invoice went up seven times. That trade isn't worth it, so CostGuard fails the version and blocks the promotion.",
+      "target_sec": 16,
+      "capture": "captures/cli",
+      "captions": true
+    },
+    {
+      "id": "s08_on_uipath",
+      "beat": "reveal_artifact",
+      "vo": "And this isn't a script on my laptop. It's an unattended job on UiPath Automation Cloud, on a serverless robot. The result it returned: verdict, fail. Action, block.",
+      "target_sec": 15,
+      "capture": null,
+      "graphic": "StatPunch",
+      "graphic_props": {
+        "stat": "FAIL",
+        "unit": "action: block",
+        "sub": "real output of an unattended UiPath job (serverless)"
+      },
+      "captions": true
+    },
+    {
+      "id": "s09_ledger",
+      "beat": "feature",
+      "vo": "It keeps a ledger too. Money saved by blocking bad versions, and by adopting genuinely cheaper ones. Cost per business outcome, in dollars finance recognizes.",
+      "target_sec": 12,
+      "capture": "captures/dashboard",
+      "captions": true
+    },
+    {
+      "id": "s10_human",
+      "beat": "feature",
+      "vo": "When it blocks, a person decides. Ship it anyway, or quarantine it. The agent never gets the last word on money.",
+      "target_sec": 11,
+      "capture": null,
+      "graphic": "TitleCard",
+      "graphic_props": {
+        "kicker": "Human in the loop",
+        "line": "Ship it anyway, or quarantine."
+      },
+      "captions": true
+    },
+    {
+      "id": "s11_robust",
+      "beat": "feature",
+      "vo": "And when the numbers are too close to call, it doesn't guess. It returns needs-review and hands it up. Cost is always paired with quality, so cheaper-but-dumber can't slip through.",
+      "target_sec": 14,
+      "capture": "captures/robust",
+      "captions": true
+    },
+    {
+      "id": "s12_coding_agent",
+      "beat": "feature",
+      "vo": "One more thing. The agent, the tests, the deploy, this job. Claude Code built and shipped all of it, driving the UiPath command line. The coding agent, operating the platform itself.",
+      "target_sec": 15,
+      "capture": "captures/coding-agent",
+      "captions": true
+    },
+    {
+      "id": "s13_impact",
+      "beat": "outcome_reframe",
+      "vo": "Catch the seven-times regression before it ships. Not on next month's invoice.",
+      "target_sec": 8,
+      "capture": null,
+      "graphic": "StatPunch",
+      "graphic_props": {
+        "stat": "7.27x",
+        "unit": "cost regression caught",
+        "sub": "blocked before production"
+      },
+      "captions": true
+    },
+    {
+      "id": "s13b_install",
+      "beat": "how_to_try",
+      "vo": "Trying it is two commands: clone the repo, then run the gate. You get a verdict — pass, fail, or needs review — and the dollars behind it. Point it at your own agent in two lines.",
+      "capture": null,
+      "graphic": "Install",
+      "captions": true
+    },
+    {
+      "id": "s14_logo",
+      "beat": "logo_cta",
+      "vo": "CostGuard. A cost gate for your agents, built and run on UiPath.",
+      "target_sec": 6,
+      "capture": null,
+      "graphic": "LogoCta",
+      "graphic_props": {
+        "cta": "github.com/GHGuide/costguard"
+      },
+      "captions": false
+    }
+  ]
+}
