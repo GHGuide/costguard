@@ -107,17 +107,17 @@ set_lines(shape(S[3], 196), [
     "It prices agents in dollars per business outcome, works on any agent or framework, and a human always owns the final call.",
 ], tag="Scores: Business Impact · Technical Execution")
 tbl = shape(S[3], 193).table
-set_cell(tbl, 0, "Platform, QA and FinOps engineers shipping AI agents to production")
+set_cell(tbl, 0, "Platform, QA and FinOps engineers shipping AI agents")
 set_cell(tbl, 1, "Engineering, QA, Platform Ops, FinOps")
-set_cell(tbl, 2, "Any enterprise running production AI agents: finance, insurance, BPO, shared services")
-set_cell(tbl, 3, "Test Cloud (the gate), Coded Agents / Python SDK (engine + Cost Explainer), Orchestrator (serverless job), Action Center (HITL), Document Understanding (patient), AI Trust Layer LLM Gateway, API Workflows (pricing)")
-set_cell(tbl, 4, "LangChain / CrewAI as external agent-under-test, OpenTelemetry, built with Claude Code via uip skills, bootstrap statistical cost bands")
+set_cell(tbl, 2, "Enterprises running production AI agents (finance, insurance, BPO)")
+set_cell(tbl, 3, "Test Cloud, Coded Agents (Python SDK), Orchestrator, Action Center, Document Understanding, AI Trust Layer Gateway")
+set_cell(tbl, 4, "LangChain / CrewAI agent-under-test, OpenTelemetry, Claude Code via uip skills")
 
 # ---- Slide 4: architecture (keep title #204; caption #205 + image) ----
 set_lines(shape(S[4], 205), [
     "A change goes in. CostGuard runs the agent many times on UiPath, prices each correct outcome, compares to the baseline, and blocks a regression. A human owns any block.",
 ], tag="Scores: Platform Usage · Technical Execution")
-drop_picture(S[4], A("architecture.png"), 2.7, 2.45, 7.9)
+drop_picture(S[4], A("cg-arch.png"), 0.7, 3.35, 11.9)
 
 # ---- Slide 5: hero / live proof ----
 set_lines(shape(S[5], 212), ["Live proof: real, not a slide"])
@@ -125,7 +125,7 @@ set_lines(shape(S[5], 213), [
     "A live serverless job on UiPath Automation Cloud returned verdict FAIL: cost 7.26× for +4.5% accuracy. On the AI Trust Layer gateway the same upgrade cost 13.12× for zero gain.",
     "The verdict is registered as a first-class Test Cloud result. The gate itself scores 30 out of 30 on a labelled eval.",
 ], tag="Scores: Completeness · Technical Execution")
-drop_picture(S[5], A("cost-regression.png"), 3.0, 3.05, 7.3)
+drop_picture(S[5], A("cg-chart.png"), 3.42, 3.3, 6.5)
 
 # ---- Slide 6: closing ----
 set_lines(shape(S[6], 218), [
