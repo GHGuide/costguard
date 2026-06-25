@@ -4,6 +4,10 @@
 
 [![tests](https://github.com/GHGuide/costguard/actions/workflows/ci.yml/badge.svg)](https://github.com/GHGuide/costguard/actions/workflows/ci.yml) · License: MIT · Agent type: **coded** (UiPath Python SDK) — two coded agents, plus a real external **LangChain** agent as an alternate patient · Built with **Claude Code** via UiPath for Coding Agents.
 
+![It passes every correctness test you already have — extraction, schema, accuracy, QA all green — and CostGuard still blocks it: 7.27× the cost for the same answers](docs/greenred.gif)
+
+> **It passed every test you already have. It's still 7× more.** That's the gap CostGuard closes — a cost-regression gate, run and governed on UiPath.
+
 ---
 
 ## Project description

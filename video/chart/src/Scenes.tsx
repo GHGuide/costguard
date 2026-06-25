@@ -220,6 +220,60 @@ export const Architecture: React.FC = () => {
   );
 };
 
+// ---- GreenRed: the killer moment — passes every test, still 7x more ----
+export const GreenRed: React.FC = () => {
+  const f = useCurrentFrame();
+  const checks = [
+    "Fields extracted correctly",
+    "Schema valid",
+    "Accuracy 100%",
+    "Correctness QA passed",
+  ];
+  const Check: React.FC<{ y: number; label: string; at: number }> = ({ y, label, at }) => {
+    const on = ramp(f, at, at + 8);
+    return (
+      <div style={{ position: "absolute", left: M, top: y, display: "flex", alignItems: "center", gap: 18, opacity: on }}>
+        <div style={{ width: 34, height: 34, borderRadius: 8, border: `2px solid ${C.ok}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <span style={{ color: C.ok, fontSize: 22, fontWeight: 700, lineHeight: 1 }}>✓</span>
+        </div>
+        <span style={{ fontSize: 30, color: C.ink }}>{label}</span>
+      </div>
+    );
+  };
+  const gate = ramp(f, 150, 168); // the flip to red
+  return (
+    <Frame>
+      <div style={{ position: "absolute", left: M, top: 96 }}>
+        <Kicker frame={f} text="THE TRAP, SHOWN" at={2} />
+        <div style={{ fontSize: 56, fontWeight: 700, letterSpacing: -1, marginTop: 14, ...rise(f, 8) }}>
+          It passes every test you already have
+        </div>
+      </div>
+      {/* left: the correctness suite, all green */}
+      {checks.map((c, i) => <Check key={i} y={250 + i * 78} label={c} at={20 + i * 14} />)}
+      <div style={{ position: "absolute", left: M, top: 250 + 4 * 78 + 10, ...mono, fontSize: 22, color: C.ok, letterSpacing: 1, opacity: ramp(f, 90, 100) }}>
+        YOUR SUITE: PASS — would ship
+      </div>
+      {/* divider */}
+      <div style={{ position: "absolute", left: 880, top: 250, width: 1, height: 430, background: C.line, opacity: ramp(f, 16, 30) }} />
+      {/* right: CostGuard flips it red */}
+      <div style={{ position: "absolute", left: 980, top: 250, width: 760, opacity: ramp(f, 120, 134) }}>
+        <div style={{ ...mono, fontSize: 20, letterSpacing: 2, color: C.muted }}>COSTGUARD — COST PER CORRECT INVOICE</div>
+        <div style={{ ...mono, fontSize: 150, fontWeight: 600, lineHeight: 1, color: C.fail, marginTop: 10, transform: `scale(${0.85 + 0.15 * gate})` }}>7.27×</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 18, marginTop: 22 }}>
+          <div style={{ width: 4, height: 42, background: C.fail }} />
+          <div style={{ ...mono, fontSize: 34, fontWeight: 600, color: C.fail }}>FAIL — BLOCKED</div>
+        </div>
+        <div style={{ fontSize: 26, color: C.body, marginTop: 16 }}>same answers, 7× the bill</div>
+      </div>
+      {/* punch line */}
+      <div style={{ position: "absolute", left: M, top: 740, fontSize: 34, fontWeight: 600, color: C.ink, ...rise(f, 200, 12) }}>
+        Every test you have said ship it. The bill said 7× more.
+      </div>
+    </Frame>
+  );
+};
+
 // ---- LogoCta: wordmark + url (s14) ----
 export const LogoCta: React.FC<{ cta: string }> = ({ cta }) => {
   const f = useCurrentFrame();

@@ -1,7 +1,7 @@
 import React from "react";
 import { Composition } from "remotion";
 import { CostRegression } from "./CostRegression";
-import { TitleCard, StatPunch, NamedTask, SplitScreen, LogoCta, Explain, Install, Architecture } from "./Scenes";
+import { TitleCard, StatPunch, NamedTask, SplitScreen, LogoCta, Explain, Install, Architecture, GreenRed } from "./Scenes";
 import { Captions } from "./Captions";
 
 const base = { fps: 30, width: 1920, height: 1080 } as const;
@@ -41,6 +41,9 @@ export const RemotionRoot: React.FC = () => (
 
     {/* dark architecture flow — replaces the light-bg screenshot for s04/s05 */}
     <Composition id="s04-architecture" component={Architecture} durationInFrames={D} {...base} />
+
+    {/* killer moment — passes every test, still 7x more */}
+    <Composition id="s-greenred" component={GreenRed} durationInFrames={D} {...base} />
 
     <Composition id="s06-contrast" component={SplitScreen} durationInFrames={D} {...base}
       defaultProps={{
