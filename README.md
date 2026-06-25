@@ -53,6 +53,15 @@ The gate's verdicts are pinned by a **regression suite of 30 hand-labelled scena
 ```
 This is a **consistency guard, not a quality benchmark** — the scenarios are *designed* to have an obvious right answer, so 30/30 means "the gate still behaves as specified," not "the gate is 100% accurate in the wild." Run it: `python3 -m costguard.evals`.
 
+### Measured on realistic invoices, live (not a mock)
+To answer "but the agent-under-test is simulated" head-on: the gate also runs on a **realistic invoice corpus** ([`dataset_real.py`](costguard/dataset_real.py)) — 12 varied real-world layouts with label variants, `$`/`€`/`£`, thousands separators, OCR-style noise, multi-line items and VAT/discounts. On the **UiPath LLM Gateway**, with real models and real tokens, the field accuracy is genuinely *measured*:
+```
+baseline  gpt-4.1-mini · simple   →  98.3% field accuracy   $0.0001 / correct invoice
+candidate gpt-4o · verify         →  100%  field accuracy   $0.0023 / correct invoice
+VERDICT: FAIL ⛔  — 15.63× cost for +1.7% accuracy → blocked
+```
+The baseline's **98.3%** is the tell: it made a *real* extraction error on the messy inputs — this is an LLM reading real-style invoices, not a hardcoded result. Raw: [`docs/live-real-result.json`](docs/live-real-result.json). (`run_live_real.py`; the `text` here stands in for what Document Understanding emits for a scanned PDF.)
+
 ## Architecture
 
 ![CostGuard architecture — the gate runs on UiPath; FAIL blocks promotion, NEEDS_REVIEW escalates to a human in Action Center](docs/architecture.svg)
@@ -93,8 +102,8 @@ This is a **consistency guard, not a quality benchmark** — the scenarios are *
 ### What's real vs. what's simulated (so you can trust the numbers)
 | Real | Simulated / illustrative |
 |---|---|
-| LLM calls, token counts, $ cost — through the **UiPath LLM Gateway** (and Anthropic/OpenAI adapters) | The invoice **documents** are synthetically generated (fixed seed), not scanned real-world PDFs |
-| Field extraction from **actual model output** (parsed + scored vs ground truth) when run live | The **offline** demo path uses a deterministic mock gateway (so it runs with no key) — its accuracy is set, not measured |
+| LLM calls, token counts, $ cost — through the **UiPath LLM Gateway** (and Anthropic/OpenAI adapters) | The invoice **documents** are generated text — a templated set plus a 12-invoice *realistic* corpus (varied layouts, $/€/£, OCR noise) — not scanned PDFs run through Document Understanding |
+| Field extraction from **actual model output**, parsed + scored vs ground truth — **measured 98.3% baseline accuracy** on the realistic corpus, live | The **offline** demo path uses a deterministic mock gateway (so it runs with no key) — there, accuracy is set, not measured |
 | The **Orchestrator serverless job**, its FAIL verdict, and the **Test Cloud result** on CG:1 | Maestro orchestration + Action Center HITL are **contracts in code**, not deployed processes (the sandbox doesn't provision them) |
 | The **cost-per-outcome** math, bootstrap CIs, and the 7.27× / 13.12× ratios on those inputs | The 30-scenario suite is a **consistency guard**, not a wild-accuracy benchmark |
 

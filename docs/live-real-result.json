@@ -1,0 +1,64 @@
+{
+  "gate": "costguard.cost_efficiency_regression",
+  "outcome_unit": "invoice",
+  "verdict": "FAIL",
+  "cost_ratio": 15.628,
+  "accuracy_delta": 0.0167,
+  "extra_cost_per_1000_outcomes_usd": 2.12,
+  "reasons": [
+    "cost per successful invoice rose 15.63x (candidate CI $0.0020-$0.0026 vs baseline $0.0001-$0.0001)"
+  ],
+  "baseline": {
+    "name": "baseline \u00b7 gpt-4.1-mini \u00b7 simple",
+    "n_runs": 24,
+    "success_rate": 1.0,
+    "mean_accuracy": 0.9833,
+    "total_cost_usd": 0.0035,
+    "cost_per_success_usd": 0.000145,
+    "cost_per_success_ci": [
+      0.00014,
+      0.000149
+    ],
+    "mean_cost_per_run_usd": 0.000145,
+    "mean_tokens_per_run": 187.2
+  },
+  "candidate": {
+    "name": "candidate \u00b7 gpt-4o \u00b7 verify",
+    "n_runs": 24,
+    "success_rate": 1.0,
+    "mean_accuracy": 1.0,
+    "total_cost_usd": 0.0544,
+    "cost_per_success_usd": 0.002267,
+    "cost_per_success_ci": [
+      0.001996,
+      0.002588
+    ],
+    "mean_cost_per_run_usd": 0.002267,
+    "mean_tokens_per_run": 446.0
+  },
+  "attribution": {
+    "cost_ratio": 15.63,
+    "accuracy_delta": 0.0167,
+    "factors": [
+      {
+        "name": "model price",
+        "multiplier": 6.25,
+        "detail": "gpt-4o-2024-08-06 output costs 6.2x gpt-4.1-mini-2025-04-14"
+      },
+      {
+        "name": "verify pass",
+        "multiplier": 2.0,
+        "detail": "2 model call(s)/invoice vs 1"
+      },
+      {
+        "name": "token volume",
+        "multiplier": 1.25,
+        "detail": "tokens per call (verbosity / longer outputs)"
+      }
+    ],
+    "primary_driver": "model price",
+    "worth_it": false
+  },
+  "explanation": "The cost-per-processed-invoice rose 15.63x due to a 6.25x increase in model price, doubled model calls per invoice, and 1.25x higher token usage. Given only a 1.7% accuracy improvement, the cost increase is disproportionate and likely not worth the trade.",
+  "dataset": "realistic (dataset_real, 12 varied real-world layouts)"
+}
