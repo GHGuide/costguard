@@ -123,7 +123,7 @@ drop_picture(S[4], A("cg-arch.png"), 0.7, 3.35, 11.9)
 set_lines(shape(S[5], 212), ["Live proof: real, not a slide"])
 set_lines(shape(S[5], 213), [
     "A live serverless job on UiPath Automation Cloud returned verdict FAIL: cost 7.26× for +4.5% accuracy. On the AI Trust Layer gateway the same upgrade cost 13.12× for zero gain.",
-    "The verdict is registered as a first-class Test Cloud result. The gate itself scores 30 out of 30 on a labelled eval.",
+    "The verdict is registered as a first-class Test Cloud result, and a 30-scenario regression suite keeps the gate's own verdicts pinned in CI.",
 ], tag="Scores: Completeness · Technical Execution")
 drop_picture(S[5], A("cg-chart.png"), 3.42, 3.3, 6.5)
 
