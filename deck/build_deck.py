@@ -80,7 +80,7 @@ set_lines(shape(S[0], 169), [
 pic = shape(S[1], 176)
 pic._element.getparent().remove(pic._element)          # remove baked "Jane Doe" image
 set_lines(shape(S[1], 175), ["CostGuard"])
-drop_picture(S[1], A("logo.png"), 5.17, 1.95, 3.0)
+drop_picture(S[1], A("cg-logo.png"), 5.17, 1.95, 3.0)
 tb = S[1].shapes.add_textbox(Inches(3.5), Inches(5.25), Inches(6.33), Inches(0.7))
 tb.text_frame.word_wrap = True
 p = tb.text_frame.paragraphs[0]
@@ -133,6 +133,6 @@ set_lines(shape(S[6], 218), [
     "CostGuard  ·  github.com/GHGuide/costguard",
 ])
 
-out = os.path.join(HERE, "costguard.pptx")
+out = os.path.join(HERE, "CG-submission.pptx")
 prs.save(out)
 print("saved", out, "|", len(prs.slides), "slides")
