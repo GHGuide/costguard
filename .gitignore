@@ -38,3 +38,6 @@ video/chart/.remotion/
 video/out/
 video/captures/
 video/vo/
+
+# UiPath-provided deck template (keep local, not my content)
+deck/template.pptx
