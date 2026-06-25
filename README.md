@@ -35,11 +35,11 @@ A candidate that *looks* better (higher accuracy, passes correctness tests) is *
 ### The same gate on REAL models, via UiPath (live, no external key)
 Routing the agent-under-test through the **UiPath AI Trust Layer LLM Gateway** (`UiPathLLMGateway`) — real models, real token usage, governed by the platform:
 ```
-baseline  gpt-4.1-mini · simple   →  $0.0001 / correct invoice   (100% accuracy)
-candidate gpt-4o · verify         →  $0.0017 / correct invoice   (100% accuracy)
+baseline  gpt-4.1-mini · simple   →  $0.0001 / correct invoice   (100% on the templated set)
+candidate gpt-4o · verify         →  $0.0017 / correct invoice   (100% on the templated set)
 VERDICT: FAIL ⛔  — 13.1x cost for +0.0% accuracy → blocked
 ```
-The expensive "upgrade" (bigger model + a verify pass) bought **zero** quality and **13× the cost**. CostGuard blocked it — on real UiPath-gateway models, not a simulation. Raw result: [`docs/live-uipath-result.json`](docs/live-uipath-result.json).
+The expensive "upgrade" (bigger model + a verify pass) bought **zero** quality and **13× the cost**. CostGuard blocked it — on real UiPath-gateway models, not a simulation. Raw result: [`docs/live-uipath-result.json`](docs/live-uipath-result.json). *(Both score 100% here because the templated invoices are easy; on the **realistic** corpus the baseline measures **98.3%** — a real extraction error — see below.)*
 
 > **On the spread of ratios.** You'll see 7.27× (offline), 7.26× (the serverless job), 13.12× (gateway), 12.76× (LangChain), 15.63× (realistic corpus). That isn't cherry-picking — the exact multiple depends on which two models you compare. The *finding* is consistent across every run: a "smarter" candidate costs **7–16× more per correct outcome for ≤2% accuracy gain**, and the gate blocks it every time. The point is the gate, not any single number.
 
