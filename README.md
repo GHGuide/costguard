@@ -64,7 +64,7 @@ The baseline's **98.3%** is the tell: it made a *real* extraction error on the m
 
 ## Architecture
 
-![CostGuard architecture — the gate runs on UiPath; FAIL blocks promotion, NEEDS_REVIEW escalates to a human in Action Center](docs/architecture.svg)
+![CostGuard architecture — a change goes in; the agent runs N times on UiPath; cost-per-correct-outcome is compared to baseline; the cost gate promotes or blocks, with a human owning any block in Action Center](docs/architecture-flow.png)
 
 ## How it works
 
