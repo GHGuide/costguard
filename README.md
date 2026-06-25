@@ -2,7 +2,7 @@
 
 **UiPath AgentHack 2026 · Track 3 (UiPath Test Cloud)**
 
-[![tests](https://github.com/GHGuide/costguard/actions/workflows/ci.yml/badge.svg)](https://github.com/GHGuide/costguard/actions/workflows/ci.yml) · License: MIT · Agent type: **both** (a coded agent + a low-code UiPath agent) · Built with **Claude Code** via UiPath for Coding Agents.
+[![tests](https://github.com/GHGuide/costguard/actions/workflows/ci.yml/badge.svg)](https://github.com/GHGuide/costguard/actions/workflows/ci.yml) · License: MIT · Agent type: **coded** (UiPath Python SDK) — two coded agents, plus a real external **LangChain** agent as an alternate patient · Built with **Claude Code** via UiPath for Coding Agents.
 
 ---
 
@@ -20,13 +20,13 @@ Because cost is paired with a quality score, a "cheaper but dumber" agent can ne
 
 > **Why cost-per-*outcome*:** only UiPath knows the business-process boundary an agent serves, so CostGuard can price an agent in dollars-per-invoice instead of dollars-per-token — the attribution problem FinOps practitioners flagged as unsolved in 2026.
 
-### The hero result (runs offline, today)
+### The hero result (runs offline, today — `python3 -m costguard.cli`)
 ```
-COST / SUCCESS        $0.0009   →   $0.0069     (7.28x)
-quality delta                        +4.4% accuracy
-VERDICT: FAIL ⛔  — "+4.4% accuracy is not worth 7.28x cost"  → promotion blocked
+COST / SUCCESS        $0.0010   →   $0.0071     (7.27x)
+quality delta                        +4.4% accuracy   (92.7% → 97.1%)
+VERDICT: FAIL ⛔  — "+4.4% accuracy is not worth the 7.27x cost"  → promotion blocked
 ```
-A candidate that *looks* better (higher accuracy, passes correctness tests) is **7× more expensive per correctly-processed invoice**. CostGuard catches it before it ships.
+A candidate that *looks* better (higher accuracy, passes correctness tests) is **7× more expensive per correctly-processed invoice**. CostGuard catches it before it ships. *(These exact numbers reproduce from the command above.)*
 
 ### The same gate on REAL models, via UiPath (live, no external key)
 Routing the agent-under-test through the **UiPath AI Trust Layer LLM Gateway** (`UiPathLLMGateway`) — real models, real token usage, governed by the platform:
@@ -36,6 +36,8 @@ candidate gpt-4o · verify         →  $0.0017 / correct invoice   (100% accura
 VERDICT: FAIL ⛔  — 13.1x cost for +0.0% accuracy → blocked
 ```
 The expensive "upgrade" (bigger model + a verify pass) bought **zero** quality and **13× the cost**. CostGuard blocked it — on real UiPath-gateway models, not a simulation. Raw result: [`docs/live-uipath-result.json`](docs/live-uipath-result.json).
+
+> **On the spread of ratios.** You'll see 7.27× (offline), 7.26× (the serverless job), 13.12× (gateway), 12.76× (LangChain), 15.63× (realistic corpus). That isn't cherry-picking — the exact multiple depends on which two models you compare. The *finding* is consistent across every run: a "smarter" candidate costs **7–16× more per correct outcome for ≤2% accuracy gain**, and the gate blocks it every time. The point is the gate, not any single number.
 
 ![CostGuard cost-regression gate — cost per correctly-processed invoice rose 13.12× on real UiPath models for +0.0% accuracy; promotion blocked](docs/cost-regression.gif)
 
@@ -74,10 +76,10 @@ The baseline's **98.3%** is the tell: it made a *real* extraction error on the m
         ▼
  ┌──────────────── UiPath Orchestrator job  (Maestro process = the productization path) ───────┐
  │   Patient = invoice/PO extraction agent  ──run N times over a Test Cloud scenario set──┐    │
- │   (UiPath Document Understanding + Agent Builder, or an external LangChain/CrewAI agent)│    │
+ │   (demo: a simulated / real-LangChain agent;  production: Document Understanding + Agent Builder)│ │
  │                                                                                        ▼    │
  │   CostGuard coded agent (Python SDK)                                                         │
- │     • LLM gateway wraps every call → owns token + $ accounting  (+ AI Trust Layer/OTel)      │
+ │     • LLM gateway wraps every call → owns token + $ accounting  (governed by AI Trust Layer)  │
  │     • cost-per-successful-outcome + bootstrap confidence interval                            │
  │     • statistical compare vs last green baseline → PASS / FAIL / NEEDS_REVIEW                │
  │     • registers result in Test Cloud (Test Manager API)                                      │
@@ -93,7 +95,7 @@ The baseline's **98.3%** is the tell: it made a *real* extraction error on the m
 - **Agent Builder (low-code)** — the production drop-in for the patient invoice-extraction agent. *Today the patient is a deterministic simulation offline and a real **LangChain** agent on UiPath models live (below);* the gate treats any of them identically.
 - **Document Understanding** — invoice/PO field extraction (the patient).
 - **API Workflows** — refreshes the model-pricing table (tokens → $) from a live source at runtime (`refresh_pricing()` reads `COSTGUARD_PRICING_FILE`/`_JSON`; a pricing API Workflow writes it), so the gate always costs against current rates without a code change.
-- **AI Trust Layer — LLM Gateway** — the agent-under-test runs on real models here (`UiPathLLMGateway`), so token usage and cost are governed by the platform with no external API key. (+ OpenTelemetry traces for cost/token evidence.)
+- **AI Trust Layer — LLM Gateway** — the agent-under-test runs on real models here (`UiPathLLMGateway`), so token usage and cost are governed by the platform with no external API key. (Token/$ accounting is owned by the gateway wrapper itself; the platform's OpenTelemetry traces are the production evidence layer, not wired into this demo.)
 - **Action Center** — human-in-the-loop on FAIL / NEEDS_REVIEW.
 - **External framework** — a real **LangChain** agent-under-test runs on UiPath models and is gated by CostGuard, governed by the platform (live: 12.76× cost, +0% accuracy → blocked; [`docs/live-langchain-result.json`](docs/live-langchain-result.json)). Proves CostGuard tests *any* framework — UiPath-native or third-party.
 
@@ -141,7 +143,7 @@ Same engine and verdict logic — only the gateway changes, so real token usage 
 To test your own two agent versions, edit `BASELINE` / `CANDIDATE` in `costguard/cli.py`, or import `run_config`, `summarize`, `decide` and feed your own agent (any object exposing the patient contract).
 
 ## Agent type
-**Both.** Two **coded agents** (the Python regression gate + a Cost Explainer, deployed via the UiPath Python SDK, both running on the UiPath LLM Gateway) plus a **low-code Agent Builder agent** (the invoice-extraction patient). External LangChain/CrewAI agents are supported as the agent-under-test.
+**Coded.** Two **coded agents** — the Python regression gate + a Cost Explainer — deployed via the UiPath Python SDK and run on the UiPath LLM Gateway. The agent-under-test is the invoice-extraction patient (a deterministic simulation offline; a real **LangChain** agent live). A low-code **Agent Builder** agent is the natural production patient, but it is *not* built for this submission — don't let the component list below imply otherwise.
 
 ## How Claude Code built this
 This solution was built **with Claude Code** (Anthropic) through **UiPath for Coding Agents**.

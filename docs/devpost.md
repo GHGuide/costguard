@@ -37,7 +37,7 @@ Enterprises ship AI agents fast but have no way to catch when a change makes one
 
 A **regression suite of 30 hand-labelled scenarios** (`evals/scenarios.json`) pins the gate's verdicts — clear regressions, clear wins, cheaper-but-dumber traps, within-noise ties. All 30 must match their expected verdict in CI, so a change that silently flips a call fails the build. It's a **consistency guard, not a wild-accuracy benchmark** (the scenarios are designed to have an obvious right answer).
 
-**What's real vs. simulated (so the numbers are trustworthy):** the LLM calls, token counts, $ cost, the Orchestrator serverless job, and the Test Cloud result are **real**; the invoice *documents* are synthetic and the offline path uses a deterministic mock so it runs keyless. Maestro + Action Center are contracts in code, not deployed processes. The cost engine and UiPath integration are real — the agent-under-test is a controlled stand-in so the regression reproduces on demand.
+**What's real vs. simulated (so the numbers are trustworthy):** the LLM calls, token counts, $ cost, the Orchestrator serverless job, and the Test Cloud result are **real**; the invoice *documents* are synthetic and the offline path uses a deterministic mock so it runs keyless. Maestro, Action Center, Document Understanding, and a low-code Agent Builder agent are the *production* form — implemented as contracts/drop-ins, not deployed for this demo. The cost engine and UiPath integration are real — the agent-under-test is a controlled stand-in so the regression reproduces on demand.
 
 ## How it works
 
@@ -55,14 +55,14 @@ A **regression suite of 30 hand-labelled scenarios** (`evals/scenarios.json`) pi
 - **Test Cloud / Test Manager** — the verdict as a first-class test result (CG:1 → Failed, live)
 - **AI Trust Layer — LLM Gateway** — the agent-under-test runs on real models here, governed by the platform, no external key
 - **Action Center** — human-in-the-loop on blocked/uncertain verdicts
-- **Document Understanding** — the invoice-extraction agent-under-test
+- **Document Understanding** — the production source for the patient's document text (the demo feeds realistic invoice text directly; DU is the drop-in for scanned PDFs)
 - **API Workflows** — refreshes the model-pricing table (tokens → $) from a live source at runtime
 - **External frameworks** — a real LangChain agent supported (and gated live) as the agent-under-test
 - Built, tested, packaged, deployed, and run end-to-end with **UiPath for Coding Agents (Claude Code + the `uip` CLI)**
 
 ## Agent type
 
-**Both** — two coded agents (the regression gate + the Cost Explainer, via the UiPath Python SDK) plus a low-code Agent Builder agent as the production patient, with UiPath as the orchestration and governance layer.
+**Coded** — two coded agents (the regression gate + the Cost Explainer, via the UiPath Python SDK), with a real external **LangChain** agent as an alternate patient, all governed by UiPath. (A low-code Agent Builder agent is the natural production patient but isn't built for this submission.)
 
 ## How we used a coding agent (bonus)
 
