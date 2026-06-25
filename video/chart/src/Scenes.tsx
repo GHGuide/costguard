@@ -176,6 +176,50 @@ export const Install: React.FC = () => {
   );
 };
 
+// ---- Architecture: the gate flow, dark + on-brand (replaces the light screenshot) ----
+const Node: React.FC<{ x: number; y: number; w: number; title: string; sub?: string; color?: string; frame: number; at: number; strong?: boolean }> =
+  ({ x, y, w, title, sub, color, frame, at, strong }) => (
+    <div style={{ position: "absolute", left: x, top: y, width: w, padding: "14px 22px", borderRadius: 12, background: "#10151d", border: `${strong ? 2 : 1}px solid ${color || C.line}`, ...rise(frame, at, 10) }}>
+      <div style={{ fontSize: 25, fontWeight: 600, color: C.ink }}>{title}</div>
+      {sub ? <div style={{ fontSize: 17, color: C.muted, marginTop: 5 }}>{sub}</div> : null}
+    </div>
+  );
+const VLine: React.FC<{ x: number; y: number; h: number; frame: number; at: number }> = ({ x, y, h, frame, at }) => (
+  <div style={{ position: "absolute", left: x, top: y, width: 2, height: h * ramp(frame, at, at + 8), background: C.line }} />
+);
+
+export const Architecture: React.FC = () => {
+  const f = useCurrentFrame();
+  const cx = 680, w = 560;
+  return (
+    <Frame>
+      <div style={{ position: "absolute", left: M, top: 78 }}>
+        <Kicker frame={f} text="ARCHITECTURE" at={2} />
+        <div style={{ fontSize: 50, fontWeight: 700, letterSpacing: -0.5, marginTop: 12, ...rise(f, 8) }}>How the gate works</div>
+      </div>
+      <Node frame={f} at={16} x={cx} y={188} w={w} title="A developer changes the agent" sub="new prompt · model · tool" />
+      <VLine frame={f} at={22} x={cx + w / 2} y={250} h={30} />
+      <Node frame={f} at={26} x={cx} y={282} w={w} title="Agent under test" sub="UiPath Document Understanding — or LangChain / CrewAI" />
+      <VLine frame={f} at={32} x={cx + w / 2} y={356} h={30} />
+      <Node frame={f} at={36} x={cx} y={388} w={w} color={C.accent} strong title="CostGuard coded agent" sub="runs it N times · cost per correct outcome + CI · vs last green baseline" />
+      <VLine frame={f} at={44} x={cx + w / 2} y={470} h={28} />
+      <Node frame={f} at={48} x={cx + 70} y={500} w={w - 140} title="Verdict" sub="cost-per-outcome vs baseline" />
+      {/* distributor to three outcomes */}
+      <VLine frame={f} at={56} x={cx + w / 2} y={566} h={24} />
+      <div style={{ position: "absolute", left: 360, top: 590, width: 1200, height: 2, background: C.line, opacity: ramp(f, 58, 68) }} />
+      <Node frame={f} at={62} x={360} y={612} w={350} color={C.ok} title="PASS → promote" sub="ship the new version" />
+      <Node frame={f} at={68} x={760} y={612} w={350} color={C.accent} title="FAIL → block" sub="stop the regression" />
+      <Node frame={f} at={74} x={1160} y={612} w={400} color="#cf9a3b" title="NEEDS_REVIEW" sub="→ a human in Action Center" />
+      {/* platform footer band */}
+      <div style={{ position: "absolute", left: 360, top: 760, width: 1200, padding: "18px 26px", borderRadius: 12, background: "#0c1118", border: `1px solid ${C.line}`, ...rise(f, 82) }}>
+        <div style={{ ...mono, fontSize: 19, color: C.body, letterSpacing: 0.5 }}>
+          Runs on UiPath Automation Cloud — serverless job · registers a Test Cloud result · governed by the AI Trust Layer
+        </div>
+      </div>
+    </Frame>
+  );
+};
+
 // ---- LogoCta: wordmark + url (s14) ----
 export const LogoCta: React.FC<{ cta: string }> = ({ cta }) => {
   const f = useCurrentFrame();

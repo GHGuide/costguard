@@ -1,7 +1,7 @@
 import React from "react";
 import { Composition } from "remotion";
 import { CostRegression } from "./CostRegression";
-import { TitleCard, StatPunch, NamedTask, SplitScreen, LogoCta, Explain, Install } from "./Scenes";
+import { TitleCard, StatPunch, NamedTask, SplitScreen, LogoCta, Explain, Install, Architecture } from "./Scenes";
 import { Captions } from "./Captions";
 
 const base = { fps: 30, width: 1920, height: 1080 } as const;
@@ -38,6 +38,9 @@ export const RemotionRoot: React.FC = () => (
 
     {/* NEW — plain-language explanation */}
     <Composition id="s03b-explain" component={Explain} durationInFrames={D} {...base} />
+
+    {/* dark architecture flow — replaces the light-bg screenshot for s04/s05 */}
+    <Composition id="s04-architecture" component={Architecture} durationInFrames={D} {...base} />
 
     <Composition id="s06-contrast" component={SplitScreen} durationInFrames={D} {...base}
       defaultProps={{
