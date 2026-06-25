@@ -2,7 +2,7 @@
 
 **UiPath AgentHack 2026 · Track 3 (UiPath Test Cloud)**
 
-License: MIT · Agent type: **both** (a coded agent + a low-code UiPath agent) · Built with **Claude Code** via UiPath for Coding Agents.
+[![tests](https://github.com/GHGuide/costguard/actions/workflows/ci.yml/badge.svg)](https://github.com/GHGuide/costguard/actions/workflows/ci.yml) · License: MIT · Agent type: **both** (a coded agent + a low-code UiPath agent) · Built with **Claude Code** via UiPath for Coding Agents.
 
 ---
 
