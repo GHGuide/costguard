@@ -119,6 +119,11 @@ The baseline's **98.3%** is the tell: it made a *real* extraction error on the m
 
 The honest one-liner: **the cost engine and the UiPath integration are real; the agent-under-test is a controlled stand-in** so the regression is reproducible on demand. Swap in your own agent + documents and the same gate runs unchanged.
 
+### Deployed and live on UiPath Orchestrator
+![CostGuard deployed on UiPath Orchestrator — three coded-agent Function (Python) processes including CostGuard Gate v4 (0.0.4), running on UiPath Automation Cloud](docs/orchestrator.png)
+
+The CostGuard coded agent is packaged and published as **Function (Python) processes** on UiPath Automation Cloud (`CostGuard Gate v4`, 0.0.4, plus prior versions) and runs as **serverless jobs** — a job returns `verdict: FAIL · maestro_action: block · cost_ratio 7.256` in ~11s.
+
 ## Setup / run the demo (no API key, no platform access needed)
 Requires Python 3.10+ and nothing else.
 ```bash

@@ -33,7 +33,9 @@ Enterprises ship AI agents fast but have no way to catch when a change makes one
 
 ## Live proof (all real, all committed)
 
-1. **A real unattended job on UiPath Automation Cloud.** Started from Orchestrator (serverless robot, ~10s): on a candidate that *improved* accuracy +4.5% but cost **7.26× more per correctly-processed invoice**, the job returned `verdict: FAIL · maestro_action: block · cost_ratio: 7.256` — a regression a single-run correctness test passes.
+![CostGuard deployed on UiPath Orchestrator — three Function (Python) coded-agent processes including CostGuard Gate v4 (0.0.4), live on UiPath Automation Cloud](orchestrator.png)
+
+1. **A real unattended job on UiPath Automation Cloud.** The CostGuard coded agent is published as a Function (Python) process (shown above) and started from Orchestrator as a serverless job (~11s): on a candidate that *improved* accuracy +4.5% but cost **7.26× more per correctly-processed invoice**, the job returned `verdict: FAIL · maestro_action: block · cost_ratio: 7.256` — a regression a single-run correctness test passes.
 2. **The same gate on real models via the UiPath AI Trust Layer LLM Gateway** — a bigger model + a verify pass cost **13.12×** for **+0.0%** accuracy → blocked (`docs/live-uipath-result.json`).
 3. **An external LangChain agent**, gated on UiPath models, **12.76×** → blocked (`docs/live-langchain-result.json`). Proves CostGuard tests *any* framework.
 4. **A first-class Test Cloud result.** The verdict is registered as a real test execution result on test case **CG:1** in the CostGuard Test Manager project — result history shows **Failed**, linked to the repo (`costguard/uipath/register_result.py`).
