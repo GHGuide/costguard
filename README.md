@@ -32,6 +32,10 @@ VERDICT: FAIL ⛔  — "+4.4% accuracy is not worth the 7.27x cost"  → promoti
 ```
 A candidate that *looks* better (higher accuracy, passes correctness tests) is **7× more expensive per correctly-processed invoice**. CostGuard catches it before it ships. *(These exact numbers reproduce from the command above.)*
 
+![It passes every correctness test you have — fields extracted, schema valid, accuracy 100%, QA passed — and CostGuard still blocks it: 7.27× the cost for the same answers](docs/killer.png)
+
+> **The whole idea in one frame:** the candidate passes *every test you already run*. CostGuard blocks it anyway — same answers, 7× the bill.
+
 ### The same gate on REAL models, via UiPath (live, no external key)
 Routing the agent-under-test through the **UiPath AI Trust Layer LLM Gateway** (`UiPathLLMGateway`) — real models, real token usage, governed by the platform:
 ```

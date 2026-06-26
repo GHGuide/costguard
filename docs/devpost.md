@@ -13,6 +13,8 @@
 
 ## The one idea
 
+![The candidate passes every correctness test — fields, schema, accuracy, QA, all green — and CostGuard blocks it anyway: 7.27× the cost for the same answers](killer.png)
+
 **Every QA suite tests whether your agent is *right*. None test what it *costs* to be right.** A prompt tweak or model "upgrade" can quietly multiply spend while passing every correctness test. CostGuard is the missing gate — and it prices an agent in **dollars per business outcome** (per *correctly-processed invoice*), **not per token**, because only the orchestration layer can see the outcome boundary. That single reframe — cost-per-outcome, paired with a quality score — is the whole moat: a "cheaper but dumber" agent can never sneak through either.
 
 ## What it does
