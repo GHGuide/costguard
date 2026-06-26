@@ -24,7 +24,7 @@ SRC = {
     "s05_under_test":  ("out/scenes/s04-architecture.mp4",       "video"),
     "s06_contrast":    ("out/scenes/s06-contrast.mp4",        "video"),
     "s07_verdict":     ("out/scenes/s07-chart.mp4",           "video"),
-    "s08_on_uipath":   ("out/scenes/s08-uipath.mp4",          "video"),
+    "s08_on_uipath":   ("out/scenes/s08-orchestrator.mp4",    "video"),
     "s09_ledger":      ("captures/dashboard/base.mp4",        "video"),
     "s10_human":       ("out/scenes/s10-human.mp4",           "video"),
     "s11_robust":      ("captures/robust/base.mp4",           "video"),
@@ -121,12 +121,18 @@ def main():
                "durationInFrames": total_frames}, open(capjson, "w"))
     caps_mov = os.path.join(SEG, "caps.mov")
     master = os.path.join(OUT, "costguard-demo-v2.mp4")
-    # alpha ProRes needs PNG intermediate frames + an alpha pixel format
-    rendered = run(["npx", "remotion", "render", "Captions", caps_mov,
-                    "--codec=prores", "--prores-profile=4444",
-                    "--pixel-format=yuva444p10le", "--image-format=png",
-                    f"--props={capjson}"],
-                   cwd=os.path.join(HERE, "chart"), soft=True)
+    # alpha ProRes needs PNG intermediate frames + an alpha pixel format.
+    # Reuse an existing caption track when scene timings are unchanged (e.g. a
+    # source swap); delete caps.mov to force a re-render.
+    if os.path.exists(caps_mov) and "--force" not in sys.argv:
+        rendered = True
+        print("  (reusing existing caption track — delete out/_seg/caps.mov to rebuild)")
+    else:
+        rendered = run(["npx", "remotion", "render", "Captions", caps_mov,
+                        "--codec=prores", "--prores-profile=4444",
+                        "--pixel-format=yuva444p10le", "--image-format=png",
+                        f"--props={capjson}"],
+                       cwd=os.path.join(HERE, "chart"), soft=True)
     if rendered and os.path.exists(caps_mov):
         run(["ffmpeg", "-y", "-loglevel", "error", "-i", nocap, "-i", caps_mov,
              "-filter_complex", "[0:v][1:v]overlay=format=auto[v]", "-map", "[v]", "-map", "0:a",
